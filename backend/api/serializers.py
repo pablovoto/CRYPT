@@ -20,11 +20,14 @@ class MatchSerializer(serializers.ModelSerializer):
 class DriveStatSerializer(serializers.ModelSerializer):
     class Meta:
         model = DriveStat
-        fields = '__all__'
+        fields = ['name','match', 'player', 'total_drives', 'cross_wins', 'parallel_wins', 'cross_inverted_wins', 'parallel_inverted_wins']
 
-
-class DriveDetailStatSerializer(serializers.ModelSerializer):
+class Type2StatSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DriveDetailStat
-        fields = '__all__'
-        
+        model = Type2Stat
+        fields = ['name','match', 'player', 'total_backhands', 'cross_wins', 'parallel_wins']
+
+class ServiceStatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceStat
+        fields = ['name','match', 'player', 'total_services', 'to_the_t', 'open', 'middle', 'ace']

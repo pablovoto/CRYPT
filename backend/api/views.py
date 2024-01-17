@@ -22,12 +22,6 @@ from django.http import HttpResponse
 
 
 
-
-
-
-
-# def home(request): 
-#     return HttpResponse("This is the homepage")
 class ProjectManagerViewset(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
     queryset = ProjectManager.objects.all()
@@ -152,19 +146,94 @@ class DriveStatViewSet(viewsets.ModelViewSet):
     queryset = DriveStat.objects.all()
     serializer_class = DriveStatSerializer
     
-    def delete_drive_stat(drive_stat_id):
-        try:
-            drive_stat = DriveStat.objects.get(id=drive_stat_id)
-            drive_stat.delete()
-            return True
-        except DriveStat.DoesNotExist:
-            return False
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({'message': 'DriveStat List', 'data': serializer.data})
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response({'message': 'DriveStat Created', 'data': serializer.data}, status=status.HTTP_201_CREATED)
 
-class DriveDetailStatViewSet(viewsets.ModelViewSet):
-    queryset = DriveDetailStat.objects.all()
-    serializer_class = DriveDetailStatSerializer
-    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response({'message': 'DriveStat Retrieved', 'data': serializer.data})
 
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response({'message': 'DriveStat Updated', 'data': serializer.data})
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({'message': 'DriveStat Deleted'}, status=status.HTTP_204_NO_CONTENT)
 
+class Type2StatViewSet(viewsets.ModelViewSet):
+    queryset = BackhandStat.objects.all()
+    serializer_class = BackhandStatSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({'message': 'BackhandStat List', 'data': serializer.data})
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response({'message': 'BackhandStat Created', 'data': serializer.data}, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response({'message': 'BackhandStat Retrieved', 'data': serializer.data})
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response({'message': 'BackhandStat Updated', 'data': serializer.data})
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({'message': 'BackhandStat Deleted'}, status=status.HTTP_204_NO_CONTENT)
+
+class ServiceStatViewSet(viewsets.ModelViewSet):
+    queryset = ServiceStat.objects.all()
+    serializer_class = ServiceStatSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({'message': 'ServiceStat List', 'data': serializer.data})
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response({'message': 'ServiceStat Created', 'data': serializer.data}, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response({'message': 'ServiceStat Retrieved', 'data': serializer.data})
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response({'message': 'ServiceStat Updated', 'data': serializer.data})
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({'message': 'ServiceStat Deleted'}, status=status.HTTP_204_NO_CONTENT)

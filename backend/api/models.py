@@ -31,21 +31,38 @@ class Match(models.Model):
         return self.user.username
 
 class DriveStat(models.Model):
+    name = models.CharField(unique=True, max_length=100)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     player = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     total_drives = models.IntegerField()
+    cross_wins = models.IntegerField(default=0)
+    parallel_wins = models.IntegerField(default=0)
+    cross_inverted_wins = models.IntegerField(default=0)
+    parallel_inverted_wins = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.match} - {self.player}"
 
-
-class DriveDetailStat(models.Model):
-    drive_stat = models.ForeignKey(DriveStat, on_delete=models.CASCADE)
-    cross_winners = models.IntegerField()
-    cross_inverted_winners = models.IntegerField()
-    parallel_winners = models.IntegerField()
-    parallel_inverted_winners = models.IntegerField()
+class Type2Stat(models.Model):
+    name = models.CharField(unique=True, max_length=100)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    player = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    total_backhands = models.IntegerField()
+    cross_wins = models.IntegerField(default=0)
+    parallel_wins = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.drive_stat}"
-    
+        return f"{self.match} - {self.player}"
+
+class ServiceStat(models.Model):
+    name = models.CharField(unique=True, max_length=100)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    player = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    total_services = models.IntegerField()
+    to_the_t = models.IntegerField(default=0)
+    open = models.IntegerField(default=0)
+    middle = models.IntegerField(default=0)
+    ace = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.match} - {self.player}"
