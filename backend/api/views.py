@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from rest_framework import viewsets, permissions,filters,status
 from .serializers import *
 from rest_framework.response import Response
@@ -19,7 +19,11 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.views import View
 from django.http import HttpResponse
-
+from rest_framework.exceptions import PermissionDenied
+from django.contrib.auth import logout
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.utils.encoding import force_text
 
 
 class ProjectManagerViewset(viewsets.ViewSet):
@@ -98,6 +102,8 @@ class MatchHistoryView(viewsets.ViewSet):
 
 class LoginView(View):
     def post(self, request):
+        if request.user.is_authenticated:
+            return HttpResponseForbidden('You are already logged in')
         username_or_email = request.POST['username_or_email']
         password = request.POST['password']
 
@@ -123,6 +129,8 @@ class LoginView(View):
         
 class RegisterView(View):
     def post(self, request):
+        if request.user.is_authenticated:
+            return HttpResponseForbidden('You are already logged in')
         username = request.POST['username']
         password = request.POST['password']
         email = request.POST['email']
@@ -141,99 +149,162 @@ class RegisterView(View):
         send_mail('Verify your email address', email_body, 'webmaster@localhost', [email])
 
         return HttpResponse('User created, verification email sent')        
+@method_decorator(login_required, name='dispatch')
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return HttpResponse('Logged out')
+    class VerifyEmailView(View):
+        def get(self, request, uidb64, token):
+            User = get_user_model()
 
+            try:
+                # Decode the user's ID from the URL
+                uid = force_text(urlsafe_base64_decode(uidb64))
+                user = User.objects.get(pk=uid)
+
+                # Check if the token is valid
+                if default_token_generator.check_token(user, token):
+                    # If the token is valid, activate the user's account
+                    user.is_active = True
+                    user.save()
+                    return HttpResponse('Email verified, account activated')
+                else:
+                    return HttpResponse('Invalid token', status=400)
+            except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+                return HttpResponse('Invalid link', status=400)
+            
+        
 class DriveStatViewSet(viewsets.ModelViewSet):
     queryset = DriveStat.objects.all()
     serializer_class = DriveStatSerializer
     
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response({'message': 'DriveStat List', 'data': serializer.data})
+    def get_queryset(self):
+        if Professor.objects.filter(user=self.request.user).exists():
+            return ServiceStat.objects.all()
+        elif Student.objects.filter(user=self.request.user).exists():
+            return ServiceStat.objects.filter(player__user=self.request.user)
+        else:
+            return ServiceStat.objects.none()
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response({'message': 'DriveStat Created', 'data': serializer.data}, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and serializer.validated_data['player'].user == self.request.user):
+            serializer.save()
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to add this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response({'message': 'DriveStat Retrieved', 'data': serializer.data})
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+            serializer = self.get_serializer(instance)
+            return Response({'message': 'ServiceStat Retrieved', 'data': serializer.data})
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to retrieve this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response({'message': 'DriveStat Updated', 'data': serializer.data})
+    def perform_update(self, serializer):
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and serializer.instance.player.user == self.request.user):
+            serializer.save()
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to update this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({'message': 'DriveStat Deleted'}, status=status.HTTP_204_NO_CONTENT)
+    def perform_destroy(self, instance):
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+            instance.delete()
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to delete this stat.'}, code=status.HTTP_403_FORBIDDEN)
+
 
 class Type2StatViewSet(viewsets.ModelViewSet):
-    queryset = BackhandStat.objects.all()
-    serializer_class = BackhandStatSerializer
+    queryset = Type2Stat.objects.all()
+    serializer_class = Type2StatSerializer
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response({'message': 'BackhandStat List', 'data': serializer.data})
+    def get_queryset(self):
+        if Professor.objects.filter(user=self.request.user).exists():
+            return ServiceStat.objects.all()
+        elif Student.objects.filter(user=self.request.user).exists():
+            return ServiceStat.objects.filter(player__user=self.request.user)
+        else:
+            return ServiceStat.objects.none()
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response({'message': 'BackhandStat Created', 'data': serializer.data}, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and serializer.validated_data['player'].user == self.request.user):
+            serializer.save()
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to add this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response({'message': 'BackhandStat Retrieved', 'data': serializer.data})
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+            serializer = self.get_serializer(instance)
+            return Response({'message': 'ServiceStat Retrieved', 'data': serializer.data})
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to retrieve this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response({'message': 'BackhandStat Updated', 'data': serializer.data})
+    def perform_update(self, serializer):
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and serializer.instance.player.user == self.request.user):
+            serializer.save()
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to update this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({'message': 'BackhandStat Deleted'}, status=status.HTTP_204_NO_CONTENT)
+    def perform_destroy(self, instance):
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+            instance.delete()
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to delete this stat.'}, code=status.HTTP_403_FORBIDDEN)
+
 
 class ServiceStatViewSet(viewsets.ModelViewSet):
     queryset = ServiceStat.objects.all()
     serializer_class = ServiceStatSerializer
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response({'message': 'ServiceStat List', 'data': serializer.data})
+    def get_queryset(self):
+        if Professor.objects.filter(user=self.request.user).exists():
+            return ServiceStat.objects.all()
+        elif Student.objects.filter(user=self.request.user).exists():
+            return ServiceStat.objects.filter(player__user=self.request.user)
+        else:
+            return ServiceStat.objects.none()
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response({'message': 'ServiceStat Created', 'data': serializer.data}, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and serializer.validated_data['player'].user == self.request.user):
+            serializer.save()
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to add this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response({'message': 'ServiceStat Retrieved', 'data': serializer.data})
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+            serializer = self.get_serializer(instance)
+            return Response({'message': 'ServiceStat Retrieved', 'data': serializer.data})
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to retrieve this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response({'message': 'ServiceStat Updated', 'data': serializer.data})
+    def perform_update(self, serializer):
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and serializer.instance.player.user == self.request.user):
+            serializer.save()
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to update this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({'message': 'ServiceStat Deleted'}, status=status.HTTP_204_NO_CONTENT)
+    def perform_destroy(self, instance):
+        if Professor.objects.filter(user=self.request.user).exists() or \
+           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+            instance.delete()
+        else:
+            raise PermissionDenied({'message': 'You do not have permission to delete this stat.'}, code=status.HTTP_403_FORBIDDEN)
+
+def home(request):
+    return render(request, 'index.html')
+
+
+

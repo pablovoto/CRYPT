@@ -18,16 +18,43 @@ class MatchSerializer(serializers.ModelSerializer):
         fields = ['sets_won', 'games_won', 'points_won']
 
 class DriveStatSerializer(serializers.ModelSerializer):
+    player = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
     class Meta:
         model = DriveStat
-        fields = ['name','match', 'player', 'total_drives', 'cross_wins', 'parallel_wins', 'cross_inverted_wins', 'parallel_inverted_wins']
+        fields = ['name','match', 'player', 'total_drives', 'cross', 'parallel', 'cross_inverted', 'parallel_inverted']
+    def validate_name(self, value):
+        """
+        Check that the name is not empty and meets any other validation requirements.
+        """
+        if not value:
+            raise serializers.ValidationError("Name field cannot be empty.")
+        # Add any other validation requirements here
+        return value
 
 class Type2StatSerializer(serializers.ModelSerializer):
+    player = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
     class Meta:
         model = Type2Stat
-        fields = ['name','match', 'player', 'total_backhands', 'cross_wins', 'parallel_wins']
+        fields = ['name','match', 'player', 'total', 'cross', 'parallel']
+    def validate_name(self, value):
+        """
+        Check that the name is not empty and meets any other validation requirements.
+        """
+        if not value:
+            raise serializers.ValidationError("Name field cannot be empty.")
+        # Add any other validation requirements here
+        return value
 
 class ServiceStatSerializer(serializers.ModelSerializer):
+    player = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
     class Meta:
         model = ServiceStat
         fields = ['name','match', 'player', 'total_services', 'to_the_t', 'open', 'middle', 'ace']
+    def validate_name(self, value):
+        """
+        Check that the name is not empty and meets any other validation requirements.
+        """
+        if not value:
+            raise serializers.ValidationError("Name field cannot be empty.")
+        # Add any other validation requirements here
+        return value
