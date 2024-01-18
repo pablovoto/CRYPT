@@ -23,7 +23,7 @@ from rest_framework.exceptions import PermissionDenied
 from django.contrib.auth import logout
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 
 class ProjectManagerViewset(viewsets.ViewSet):
@@ -154,7 +154,7 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return HttpResponse('Logged out')
-    class VerifyEmailView(View):
+class VerifyEmailView(View):
         def get(self, request, uidb64, token):
             User = get_user_model()
 

@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+
+
 class ProjectManager(models.Model): 
     name = models.CharField(unique=True, max_length=100)
     created = models.DateTimeField(auto_now_add=True)
