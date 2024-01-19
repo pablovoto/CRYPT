@@ -180,42 +180,47 @@ class DriveStatViewSet(viewsets.ModelViewSet):
     serializer_class = DriveStatSerializer
     
     def get_queryset(self):
-        if Professor.objects.filter(user=self.request.user).exists():
-            return ServiceStat.objects.all()
-        elif Student.objects.filter(user=self.request.user).exists():
-            return ServiceStat.objects.filter(player__user=self.request.user)
-        else:
-            return ServiceStat.objects.none()
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists():
+                return ServiceStat.objects.all()
+            elif Student.objects.filter(user=self.request.user).exists():
+                return ServiceStat.objects.filter(player__user=self.request.user)
+            else:
+                return ServiceStat.objects.none()
 
     def perform_create(self, serializer):
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and serializer.validated_data['player'].user == self.request.user):
-            serializer.save()
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to add this stat.'}, code=status.HTTP_403_FORBIDDEN)
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and serializer.validated_data['player'].user == self.request.user):
+                serializer.save()
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to add this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
-            serializer = self.get_serializer(instance)
-            return Response({'message': 'ServiceStat Retrieved', 'data': serializer.data})
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to retrieve this stat.'}, code=status.HTTP_403_FORBIDDEN)
+        if self.request.user.is_authenticated:
+            instance = self.get_object()
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+                serializer = self.get_serializer(instance)
+                return Response({'message': 'ServiceStat Retrieved', 'data': serializer.data})
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to retrieve this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def perform_update(self, serializer):
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and serializer.instance.player.user == self.request.user):
-            serializer.save()
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to update this stat.'}, code=status.HTTP_403_FORBIDDEN)
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and serializer.instance.player.user == self.request.user):
+                serializer.save()
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to update this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def perform_destroy(self, instance):
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
-            instance.delete()
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to delete this stat.'}, code=status.HTTP_403_FORBIDDEN)
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+                instance.delete()
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to delete this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
 
 class Type2StatViewSet(viewsets.ModelViewSet):
@@ -223,86 +228,97 @@ class Type2StatViewSet(viewsets.ModelViewSet):
     serializer_class = Type2StatSerializer
 
     def get_queryset(self):
-        if Professor.objects.filter(user=self.request.user).exists():
-            return ServiceStat.objects.all()
-        elif Student.objects.filter(user=self.request.user).exists():
-            return ServiceStat.objects.filter(player__user=self.request.user)
-        else:
-            return ServiceStat.objects.none()
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists():
+                return ServiceStat.objects.all()
+            elif Student.objects.filter(user=self.request.user).exists():
+                return ServiceStat.objects.filter(player__user=self.request.user)
+            else:
+                return ServiceStat.objects.none()
 
     def perform_create(self, serializer):
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and serializer.validated_data['player'].user == self.request.user):
-            serializer.save()
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to add this stat.'}, code=status.HTTP_403_FORBIDDEN)
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and serializer.validated_data['player'].user == self.request.user):
+                serializer.save()
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to add this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
-            serializer = self.get_serializer(instance)
-            return Response({'message': 'ServiceStat Retrieved', 'data': serializer.data})
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to retrieve this stat.'}, code=status.HTTP_403_FORBIDDEN)
+        if self.request.user.is_authenticated:
+            instance = self.get_object()
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+                serializer = self.get_serializer(instance)
+                return Response({'message': 'ServiceStat Retrieved', 'data': serializer.data})
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to retrieve this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def perform_update(self, serializer):
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and serializer.instance.player.user == self.request.user):
-            serializer.save()
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to update this stat.'}, code=status.HTTP_403_FORBIDDEN)
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and serializer.instance.player.user == self.request.user):
+                serializer.save()
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to update this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def perform_destroy(self, instance):
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
-            instance.delete()
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to delete this stat.'}, code=status.HTTP_403_FORBIDDEN)
-
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+                instance.delete()
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to delete this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
 class ServiceStatViewSet(viewsets.ModelViewSet):
     queryset = ServiceStat.objects.all()
     serializer_class = ServiceStatSerializer
 
     def get_queryset(self):
-        if Professor.objects.filter(user=self.request.user).exists():
-            return ServiceStat.objects.all()
-        elif Student.objects.filter(user=self.request.user).exists():
-            return ServiceStat.objects.filter(player__user=self.request.user)
-        else:
-            return ServiceStat.objects.none()
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists():
+                return ServiceStat.objects.all()
+            elif Student.objects.filter(user=self.request.user).exists():
+                return ServiceStat.objects.filter(player__user=self.request.user)
+            else:
+                return ServiceStat.objects.none()
 
     def perform_create(self, serializer):
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and serializer.validated_data['player'].user == self.request.user):
-            serializer.save()
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to add this stat.'}, code=status.HTTP_403_FORBIDDEN)
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and serializer.validated_data['player'].user == self.request.user):
+                serializer.save()
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to add this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
-            serializer = self.get_serializer(instance)
-            return Response({'message': 'ServiceStat Retrieved', 'data': serializer.data})
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to retrieve this stat.'}, code=status.HTTP_403_FORBIDDEN)
+        if self.request.user.is_authenticated:
+            instance = self.get_object()
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+                serializer = self.get_serializer(instance)
+                return Response({'message': 'ServiceStat Retrieved', 'data': serializer.data})
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to retrieve this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def perform_update(self, serializer):
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and serializer.instance.player.user == self.request.user):
-            serializer.save()
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to update this stat.'}, code=status.HTTP_403_FORBIDDEN)
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and serializer.instance.player.user == self.request.user):
+                serializer.save()
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to update this stat.'}, code=status.HTTP_403_FORBIDDEN)
 
     def perform_destroy(self, instance):
-        if Professor.objects.filter(user=self.request.user).exists() or \
-           (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
-            instance.delete()
-        else:
-            raise PermissionDenied({'message': 'You do not have permission to delete this stat.'}, code=status.HTTP_403_FORBIDDEN)
-
+        if self.request.user.is_authenticated:
+            if Professor.objects.filter(user=self.request.user).exists() or \
+            (Student.objects.filter(user=self.request.user).exists() and instance.player.user == self.request.user):
+                instance.delete()
+            else:
+                raise PermissionDenied({'message': 'You do not have permission to delete this stat.'}, code=status.HTTP_403_FORBIDDEN)
+            
+            
+            
 def home(request):
     return render(request, 'index.html')
 
