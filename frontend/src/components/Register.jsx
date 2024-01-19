@@ -10,7 +10,9 @@ const schema = yup.object().shape({
   email: yup.string().required().email(),
   password: yup.string().required().min(8).max(20).matches(/(?=.*[0-9])(?=.*[A-Z])/),
   passwordConfirmation: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match'),
-  userType: yup.string().required()
+  userType: yup.string().required(),
+  first_name: yup.string().required(), // Add this line
+  last_name: yup.string().required() // Add this line
 });
 
 const Register = () => {
@@ -24,6 +26,8 @@ const Register = () => {
         username: data.username,
         password: data.password,
         email: data.email,
+        first_name: data.first_name, // Add this line
+        last_name: data.last_name, // Add this line
         user_type: 'student' // default user type
       });
 
@@ -49,6 +53,16 @@ const Register = () => {
           <input type="email" {...register('email')} />
           {errors.email && <p>{errors.email.message}</p>}
         </label>
+        <label>
+        First Name:
+        <input type="text" {...register('first_name')} />
+        {errors.first_name && <p>{errors.first_name.message}</p>}
+      </label>
+      <label>
+        Last Name:
+        <input type="text" {...register('last_name')} />
+        {errors.last_name && <p>{errors.last_name.message}</p>}
+      </label>
         <label>
           Password:
           <input type="password" {...register('password')} />
