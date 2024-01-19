@@ -58,3 +58,13 @@ class ServiceStatSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Name field cannot be empty.")
         # Add any other validation requirements here
         return value
+    
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ['user']
+
+class ProfessorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Professor
+        fields = ['user']

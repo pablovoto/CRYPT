@@ -12,6 +12,8 @@ router.register(r'match_history', views.MatchHistoryView, basename='match_histor
 router.register(r'drive_stat', views.DriveStatViewSet, basename='drive_stat')
 router.register(r'type2_stat', views.Type2StatViewSet, basename='type2_stat')
 router.register(r'service_stat', views.ServiceStatViewSet, basename='service_stat')
+router.register(r'students', StudentViewSet)
+router.register(r'professors', ProfessorViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

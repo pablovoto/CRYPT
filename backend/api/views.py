@@ -24,7 +24,7 @@ from django.contrib.auth import logout
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.utils.encoding import force_str
-
+from django.contrib.auth.views import LogoutView as AuthLogoutView
 
 class ProjectManagerViewset(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
@@ -121,7 +121,12 @@ class LoginView(View):
         if user is not None:
             if user.check_password(password):
                 login(request, user)
-                return HttpResponse('Logged in')
+                
+                # Determine if the user is a Student or Professor
+                user_type = 'student' if Student.objects.filter(user=user).exists() else 'professor'
+                
+                # Include the user type in the response
+                return HttpResponse(f'Logged in as {user_type}')
             else:
                 return HttpResponse('Invalid credentials', status=401)
         else:
@@ -134,10 +139,18 @@ class RegisterView(View):
         username = request.POST['username']
         password = request.POST['password']
         email = request.POST['email']
+        user_type = request.POST['user_type']  # 'student' or 'teacher'
         user = User.objects.create_user(username, email, password)
         user.is_active = False
         user.save()
 
+        # Create a Student or Teacher instance based on the user's selection
+        if user_type == 'student':
+            Student.objects.create(user=user)
+        elif user_type == 'teacher':
+            Professor.objects.create(user=user)
+        else:
+            return HttpResponse('Invalid user type', status=400)
         # Generate a one-time use token and an email message body
         token = default_token_generator.make_token(user)
         email_body = render_to_string('activation_email.html', {
@@ -150,17 +163,16 @@ class RegisterView(View):
 
         return HttpResponse('User created, verification email sent')        
 @method_decorator(login_required, name='dispatch')
-class LogoutView(View):
-    def get(self, request):
-        logout(request)
-        return HttpResponse('Logged out')
+class LogoutView(AuthLogoutView):
+    next_page = '/login/'  # or wherever you want to redirect to
+    
 class VerifyEmailView(View):
         def get(self, request, uidb64, token):
             User = get_user_model()
 
             try:
                 # Decode the user's ID from the URL
-                uid = force_text(urlsafe_base64_decode(uidb64))
+                uid = force_str(urlsafe_base64_decode(uidb64))
                 user = User.objects.get(pk=uid)
 
                 # Check if the token is valid
@@ -322,5 +334,11 @@ class ServiceStatViewSet(viewsets.ModelViewSet):
 def home(request):
     return render(request, 'index.html')
 
+class StudentViewSet(viewsets.ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
 
+class ProfessorViewSet(viewsets.ModelViewSet):
+    queryset = Professor.objects.all()
+    serializer_class = ProfessorSerializer
 
