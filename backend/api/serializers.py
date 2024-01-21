@@ -68,3 +68,8 @@ class ProfessorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Professor
         fields = ['user']
+
+class MatchHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MatchHistory
+        fields = ['id', 'match', 'player1_score', 'player2_score', 'player1_games', 'player2_games', 'player1_sets', 'player2_sets', 'is_tiebreaker', 'timestamp']

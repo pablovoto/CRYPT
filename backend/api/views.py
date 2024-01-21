@@ -82,23 +82,10 @@ class MatchView(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class MatchHistoryView(viewsets.ViewSet):
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['sets_won', 'games_won', 'points_won']
+class MatchHistoryView(viewsets.ModelViewSet):
+    queryset = MatchHistory.objects.all()
+    serializer_class = MatchHistorySerializer
 
-    def list(self, request, user_id=None):
-        user = get_object_or_404(User, pk=user_id)
-        queryset = Match.objects.filter(user=user)
-
-        # Apply the filters
-        queryset = self.filter_queryset(queryset)
-
-        paginator = PageNumberPagination()
-        paginator.page_size = 10  # Set page size here
-        result_page = paginator.paginate_queryset(queryset, request)
-        serializer = MatchSerializer(result_page, many=True)
-
-        return paginator.get_paginated_response(serializer.data)
 
 class LoginView(View):
     def post(self, request):
@@ -330,10 +317,6 @@ class ServiceStatViewSet(viewsets.ModelViewSet):
                 raise PermissionDenied({'message': 'You do not have permission to delete this stat.'}, code=status.HTTP_403_FORBIDDEN)
             
             
-            
-def home(request):
-    return render(request, 'index.html')
-
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer

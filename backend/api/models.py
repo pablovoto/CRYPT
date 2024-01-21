@@ -51,7 +51,17 @@ class Match(models.Model):
     
     def __str__(self):
         return self.user.username
-
+class MatchHistory(models.Model):
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    player1_score = models.IntegerField()
+    player2_score = models.IntegerField()
+    player1_games = models.IntegerField()
+    player2_games = models.IntegerField()
+    player1_sets = models.IntegerField()
+    player2_sets = models.IntegerField()
+    is_tiebreaker = models.BooleanField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
 class DriveStat(models.Model):
     name = models.CharField(unique=True, max_length=100)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
