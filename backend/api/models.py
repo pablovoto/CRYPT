@@ -63,10 +63,10 @@ class MatchHistory(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     
 class DriveStat(models.Model):
-    name = models.CharField(unique=True, max_length=100)
+    name = models.CharField(max_length=100)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
-    player = models.ForeignKey(Student, on_delete=models.CASCADE)
-    total_drives = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    total= models.IntegerField()
     cross = models.IntegerField(default=0)
     parallel= models.IntegerField(default=0)
     cross_inverted = models.IntegerField(default=0)
@@ -76,9 +76,9 @@ class DriveStat(models.Model):
         return f"{self.match} - {self.player}"
 
 class Type2Stat(models.Model):
-    name = models.CharField(unique=True, max_length=100)
+    name = models.CharField(max_length=100)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
-    player = models.ForeignKey(Student, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)    
     total = models.IntegerField()
     cross = models.IntegerField(default=0)
     parallel = models.IntegerField(default=0)
@@ -87,9 +87,9 @@ class Type2Stat(models.Model):
         return f"{self.match} - {self.player}"
 
 class ServiceStat(models.Model):
-    name = models.CharField(unique=True, max_length=100)
+    name = models.CharField(max_length=100)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
-    player = models.ForeignKey(Student, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_services = models.IntegerField()
     to_the_t = models.IntegerField(default=0)
     open = models.IntegerField(default=0)

@@ -21,7 +21,7 @@ class DriveStatSerializer(serializers.ModelSerializer):
     player = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
     class Meta:
         model = DriveStat
-        fields = ['name','match', 'player', 'total_drives', 'cross', 'parallel', 'cross_inverted', 'parallel_inverted']
+        fields = ['name','match', 'user', 'total', 'cross', 'parallel', 'cross_inverted', 'parallel_inverted']
     def validate_name(self, value):
         """
         Check that the name is not empty and meets any other validation requirements.
@@ -35,7 +35,7 @@ class Type2StatSerializer(serializers.ModelSerializer):
     player = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
     class Meta:
         model = Type2Stat
-        fields = ['name','match', 'player', 'total', 'cross', 'parallel']
+        fields = ['name','match', 'user', 'total', 'cross', 'parallel']
     def validate_name(self, value):
         """
         Check that the name is not empty and meets any other validation requirements.
@@ -49,7 +49,7 @@ class ServiceStatSerializer(serializers.ModelSerializer):
     player = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
     class Meta:
         model = ServiceStat
-        fields = ['name','match', 'player', 'total_services', 'to_the_t', 'open', 'middle', 'ace']
+        fields = ['name','match', 'user', 'total_services', 'to_the_t', 'open', 'middle', 'ace']
     def validate_name(self, value):
         """
         Check that the name is not empty and meets any other validation requirements.

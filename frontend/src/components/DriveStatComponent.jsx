@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios'; // Assuming you're using axios for API calls
 
-function DriveStatComponent({ matchId, playerId , name ,flag}) {
+function DriveStatComponent({ matchId, userId , name ,flag}) {
   const [stats, setStats] = useState({
     name: name,
     total_drives: 0,
@@ -34,7 +34,7 @@ function DriveStatComponent({ matchId, playerId , name ,flag}) {
   } , [flag]);
 
   const saveStats = () => {
-    axios.put(`/api/stats/${matchId}/${playerId}/${name}`, stats)
+    axios.put(`/api/stats/${matchId}/${userId}/${name}`, stats)
       .then(response => {
         console.log('Stats saved successfully:', response.data);
       })
