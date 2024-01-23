@@ -7,14 +7,20 @@ from . import views
 router = DefaultRouter()
 router.register(r'project_manager', views.ProjectManagerViewset, basename='project_manager')
 router.register(r'project', views.ProjectViewset, basename='project')
-router.register(r'match', views.MatchView, basename='match')
-router.register(r'match_history', views.MatchHistoryView, basename='match_history')
 router.register(r'drive_stat', views.DriveStatViewSet, basename='drive_stat')
 router.register(r'type2_stat', views.Type2StatViewSet, basename='type2_stat')
 router.register(r'service_stat', views.ServiceStatViewSet, basename='service_stat')
 router.register(r'students', StudentViewSet)
 router.register(r'professors', ProfessorViewSet)
-router.register(r'matches/(?P<match_id>\d+)/history', MatchHistoryView, basename='matchhistory')
+router.register(r'matches', MatchView, basename='matches')
+router.register(r'matches/(?P<matchId>\d+)/history', MatchHistoryView, basename='matchhistory')
+router.register(r'matches/(?P<matchId>\d+)', MatchView, basename='match')
+router.register(r'stats/(?P<matchId>\d+)/(?P<userId>\d+)/(?P<name>\w+)', DriveStatViewSet, basename='drive_stat')
+router.register(r'stats/(?P<matchId>\d+)/(?P<userId>\d+)/(?P<name>\w+)', Type2StatViewSet, basename='type2_stat')
+router.register(r'stats/(?P<matchId>\d+)/(?P<userId>\d+)/(?P<name>\w+)', ServiceStatViewSet, basename='service_stat')
+
+
+
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -22,5 +28,7 @@ urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='register'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
     path('verify_email/<uidb64>/<token>/', views.VerifyEmailView.as_view(), name='verify_email'),
-    path('home/', views.home, name='home'),
+    path('api/user/<int:userId>/drivestats', UserDriveStatsList.as_view()),
+    path('api/user/<int:userId>/type2stats', UserType2StatsList.as_view()),
+    path('api/user/<int:userId>/servicestats', UserServiceStatsList.as_view()),
 ]

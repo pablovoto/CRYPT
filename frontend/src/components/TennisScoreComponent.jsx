@@ -63,15 +63,6 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
             player2Sets,
             isTieBreaker: newIsTieBreaker
         }]);
-        axios.post(`/api/matches/${matchId}/history/`, {
-            player1_score: player1Score,
-            player2_score: player2Score,
-            player1_games: player1Games,
-            player2_games: player2Games,
-            player1_sets: player1Sets,
-            player2_sets: player2Sets,
-            is_tiebreaker: isTieBreaker,
-        });
     };
 
     const decrementScore = () => {
@@ -89,8 +80,6 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
         setPlayer1Sets(lastEntry.player1Sets);
         setPlayer2Sets(lastEntry.player2Sets);
         setIsTieBreaker(lastEntry.isTieBreaker);
-        const lastEntryId = history[history.length - 1].id;
-        axios.delete(`/api/matches/${matchId}/history/${lastEntryId}/`);
     }
 };
     

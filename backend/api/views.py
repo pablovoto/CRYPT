@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseForbidden
-from rest_framework import viewsets, permissions,filters,status
+from rest_framework import viewsets, permissions,generics,status
 from .serializers import *
 from rest_framework.response import Response
 from .models import *
@@ -74,18 +74,16 @@ class ProjectViewset(viewsets.ViewSet):
         project.delete()
         return Response(status=204)
 
-class MatchView(viewsets.ViewSet):
-    def post(self, request, format=None):
-        serializer = MatchSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class MatchView(viewsets.ModelViewSet):
+    queryset = Match.objects.all()
+    serializer_class = MatchSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 class MatchHistoryView(viewsets.ModelViewSet):
     queryset = MatchHistory.objects.all()
     serializer_class = MatchHistorySerializer
-
 
 class LoginView(View):
     def post(self, request):
@@ -153,27 +151,6 @@ class RegisterView(View):
 class LogoutView(AuthLogoutView):
     next_page = '/login/'  # or wherever you want to redirect to
     
-class VerifyEmailView(View):
-        def get(self, request, uidb64, token):
-            User = get_user_model()
-
-            try:
-                # Decode the user's ID from the URL
-                uid = force_str(urlsafe_base64_decode(uidb64))
-                user = User.objects.get(pk=uid)
-
-                # Check if the token is valid
-                if default_token_generator.check_token(user, token):
-                    # If the token is valid, activate the user's account
-                    user.is_active = True
-                    user.save()
-                    return HttpResponse('Email verified, account activated')
-                else:
-                    return HttpResponse('Invalid token', status=400)
-            except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-                return HttpResponse('Invalid link', status=400)
-            
-        
 class DriveStatViewSet(viewsets.ModelViewSet):
     queryset = DriveStat.objects.all()
     serializer_class = DriveStatSerializer
@@ -181,11 +158,11 @@ class DriveStatViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             if Professor.objects.filter(user=self.request.user).exists():
-                return ServiceStat.objects.all()
+                return DriveStat.objects.all()
             elif Student.objects.filter(user=self.request.user).exists():
-                return ServiceStat.objects.filter(player__user=self.request.user)
+                return DriveStat.objects.filter(player__user=self.request.user)
             else:
-                return ServiceStat.objects.none()
+                return DriveStat.objects.none()
 
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
@@ -229,11 +206,11 @@ class Type2StatViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             if Professor.objects.filter(user=self.request.user).exists():
-                return ServiceStat.objects.all()
+                return Type2Stat.objects.all()
             elif Student.objects.filter(user=self.request.user).exists():
-                return ServiceStat.objects.filter(player__user=self.request.user)
+                return Type2Stat.objects.filter(player__user=self.request.user)
             else:
-                return ServiceStat.objects.none()
+                return Type2Stat.objects.none()
 
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
@@ -325,3 +302,23 @@ class ProfessorViewSet(viewsets.ModelViewSet):
     queryset = Professor.objects.all()
     serializer_class = ProfessorSerializer
 
+class UserDriveStatsList(generics.ListAPIView):
+    serializer_class = DriveStatSerializer
+
+    def get_queryset(self):
+        userId = self.kwargs['userId']
+        return DriveStat.objects.filter(user=userId)
+
+class UserType2StatsList(generics.ListAPIView):
+    serializer_class = Type2StatSerializer
+
+    def get_queryset(self):
+        userId = self.kwargs['userId']
+        return Type2Stat.objects.filter(user=userId)
+
+class UserServiceStatsList(generics.ListAPIView):
+    serializer_class = ServiceStatSerializer
+
+    def get_queryset(self):
+        userId = self.kwargs['userId']
+        return ServiceStat.objects.filter(user=userId)
