@@ -25,7 +25,7 @@ const Create = () => {
   ]
 
   const GetData = () => {
-    AxiosInstance.get(`projectmanager/`).then((res) =>{
+    AxiosInstance.get(`project_manager/`).then((res) =>{
       setProjectmanager(res.data)
       console.log(res.data)
       setLoading(false)

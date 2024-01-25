@@ -147,9 +147,7 @@ class RegisterView(View):
             'token': token,
         })
 
-        send_mail('Verify your email address', email_body, 'webmaster@localhost', [email])
-
-        return HttpResponse('User created, verification email sent')        
+        return HttpResponse('User created, verification pending', status=201)        
 @method_decorator(login_required, name='dispatch')
 class LogoutView(AuthLogoutView):
     next_page = '/login/'  # or wherever you want to redirect to

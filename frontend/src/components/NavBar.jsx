@@ -22,7 +22,7 @@ import { useState , useEffect } from 'react';
 import LogoutIcon from '@mui/icons-material/Logout';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import AddchartIcon from '@mui/icons-material/Addchart';
-
+import axios from 'axios';
 
 export default function Navbar(props) {
   const {drawerWidth, content} = props
@@ -40,6 +40,37 @@ export default function Navbar(props) {
       setIsLoggedIn(false);
     }
   }, []);
+
+  const [userRole, setUserRole] = useState(null);
+
+  const getUserRole = async (userId) => {
+    try {
+      const studentResponse = await axios.get(`/students/${userId}/`);
+      if (studentResponse.data) {
+        setUserRole('student');
+        return;
+      }
+    } catch (error) {
+      console.error('Error fetching student:', error);
+    }
+  
+    try {
+      const professorResponse = await axios.get(`/professors/${userId}/`);
+      if (professorResponse.data) {
+        setUserRole('professor');
+        return;
+      }
+    } catch (error) {
+      console.error('Error fetching professor:', error);
+    }
+  
+    console.error('User is neither a student nor a professor');
+  };
+  // Call getUserRole when the user logs in
+  // Replace 'userId' with the actual user ID
+  getUserRole('userId');
+
+
 
   const changeOpenStatus = () => {
     setOpen(!open)
@@ -100,27 +131,27 @@ export default function Navbar(props) {
               </ListItem>
           )}
 
-          {isLoggedIn && (
+            {isLoggedIn && userRole === 'student' && (
               <ListItem disablePadding>
-                  <ListItemButton component={Link} to="/matchstats" selected={"/matchstats" === path}>
-                      <ListItemIcon>
-                          <AddchartIcon/>
-                      </ListItemIcon>
-                      <ListItemText primary={"Match Stats"} />
-                  </ListItemButton>
+                <ListItemButton component={Link} to="/matchstats" selected={"/matchstats" === path}>
+                  <ListItemIcon>
+                    <AddchartIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={"Match Stats"} />
+                </ListItemButton>
               </ListItem>
-          )}
+            )}
 
-          {isLoggedIn && (
+            {isLoggedIn && userRole === 'student' && (
               <ListItem disablePadding>
-                  <ListItemButton component={Link} to="/userstats" selected={"/userstats" === path}>
-                      <ListItemIcon>
-                          <TimelineIcon/>
-                      </ListItemIcon>
-                      <ListItemText primary={"User Stats"} />
-                  </ListItemButton>
+                <ListItemButton component={Link} to="/userstats" selected={"/userstats" === path}>
+                  <ListItemIcon>
+                    <TimelineIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={"User Stats"} />
+                </ListItemButton>
               </ListItem>
-          )}
+            )}
 
           {isLoggedIn && (
               <ListItem disablePadding>
