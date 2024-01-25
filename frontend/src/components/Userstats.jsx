@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function UserStats({ userId }) {
+function UserStats() {
+  const userId = localStorage.getItem('userId');
   const [driveStats, setDriveStats] = useState([]);
   const [type2Stats, setType2Stats] = useState([]);
   const [serviceStats, setServiceStats] = useState([]);

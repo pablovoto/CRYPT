@@ -21,6 +21,7 @@ const Logout = () => {
       if (response.status === 200) {
         // Handle successful logout here
         console.log('Logged out');
+        localStorage.removeItem('userId');
       }
     } catch (error) {
       console.log('Logout failed');

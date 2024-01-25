@@ -20,6 +20,8 @@ const Login = () => {
             if (response.status === 200) {
                 // Handle successful login here
                 console.log('Logged in');
+                // Store the user's ID in the local storage
+                localStorage.setItem('userId', response.data.userId);
             } else {
                 setError('Invalid credentials');
             }
@@ -42,7 +44,7 @@ const Login = () => {
                 {error && <p>{error}</p>}
                 <button type="submit">Login</button>
             </form>
-            <p>Don´t have an account? <Link to="/signup">Click here</Link> to sign up.</p>
+            <p>Don´t have an account? <Link to="/register">Click here</Link> to sign up.</p>
         </div>
     );
 };

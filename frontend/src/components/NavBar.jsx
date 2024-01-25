@@ -16,6 +16,13 @@ import InfoIcon from '@mui/icons-material/Info';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton } from '@mui/material';
+import LoginIcon from '@mui/icons-material/Login';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import { useState , useEffect } from 'react';
+import LogoutIcon from '@mui/icons-material/Logout';
+import TimelineIcon from '@mui/icons-material/Timeline';
+import AddchartIcon from '@mui/icons-material/Addchart';
+
 
 export default function Navbar(props) {
   const {drawerWidth, content} = props
@@ -23,6 +30,16 @@ export default function Navbar(props) {
   const path = location.pathname
 
   const [open, setOpen] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      setIsLoggedIn(true);
+    }
+    else {
+      setIsLoggedIn(false);
+    }
+  }, []);
 
   const changeOpenStatus = () => {
     setOpen(!open)
@@ -60,10 +77,66 @@ export default function Navbar(props) {
                 <ListItemText primary={"Create"} />
                 </ListItemButton>
             </ListItem>
+            
+            {!isLoggedIn && (
+        <ListItem disablePadding>
+            <ListItemButton component={Link} to="/login" selected={"/login" === path}>
+                <ListItemIcon>
+                    <LoginIcon/>
+                </ListItemIcon>
+                <ListItemText primary={"Login"} />
+            </ListItemButton>
+        </ListItem>
+          )}
+
+          {!isLoggedIn && (
+              <ListItem disablePadding>
+                  <ListItemButton component={Link} to="/register" selected={"/register" === path}>
+                      <ListItemIcon>
+                          <PersonAddAltIcon/>
+                      </ListItemIcon>
+                      <ListItemText primary={"Register"} />
+                  </ListItemButton>
+              </ListItem>
+          )}
+
+          {isLoggedIn && (
+              <ListItem disablePadding>
+                  <ListItemButton component={Link} to="/matchstats" selected={"/matchstats" === path}>
+                      <ListItemIcon>
+                          <AddchartIcon/>
+                      </ListItemIcon>
+                      <ListItemText primary={"Match Stats"} />
+                  </ListItemButton>
+              </ListItem>
+          )}
+
+          {isLoggedIn && (
+              <ListItem disablePadding>
+                  <ListItemButton component={Link} to="/userstats" selected={"/userstats" === path}>
+                      <ListItemIcon>
+                          <TimelineIcon/>
+                      </ListItemIcon>
+                      <ListItemText primary={"User Stats"} />
+                  </ListItemButton>
+              </ListItem>
+          )}
+
+          {isLoggedIn && (
+              <ListItem disablePadding>
+                  <ListItemButton component={Link} to="/logout" selected={"/logout" === path}>
+                      <ListItemIcon>
+                          <LogoutIcon/>
+                      </ListItemIcon>
+                      <ListItemText primary={"Logout"} />
+                  </ListItemButton>
+              </ListItem>
+          )}
+
 
         </List>
-        
-        </Box>
+    
+       </Box>
 
     </div>
 

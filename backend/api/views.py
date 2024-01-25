@@ -25,6 +25,9 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.utils.encoding import force_str
 from django.contrib.auth.views import LogoutView as AuthLogoutView
+from django.http import JsonResponse
+
+
 
 class ProjectManagerViewset(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
@@ -101,7 +104,7 @@ class LoginView(View):
             except User.DoesNotExist:
                 return HttpResponse('Invalid credentials', status=401)
         else:
-            user = authenticate(request, username=username_or_email, password=password)
+            user = authenticate(request, username_or_email, password=password)
 
         if user is not None:
             if user.check_password(password):
@@ -110,8 +113,8 @@ class LoginView(View):
                 # Determine if the user is a Student or Professor
                 user_type = 'student' if Student.objects.filter(user=user).exists() else 'professor'
                 
-                # Include the user type in the response
-                return HttpResponse(f'Logged in as {user_type}')
+                # Include the user's ID and type in the response
+                return JsonResponse({'status': 'ok', 'userId': user.id, 'userType': user_type})
             else:
                 return HttpResponse('Invalid credentials', status=401)
         else:

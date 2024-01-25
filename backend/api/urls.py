@@ -27,7 +27,7 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(), name='login'),
     path('register/', views.RegisterView.as_view(), name='register'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
-    path('verify_email/<uidb64>/<token>/', views.VerifyEmailView.as_view(), name='verify_email'),
+
     path('api/user/<int:userId>/drivestats', UserDriveStatsList.as_view()),
     path('api/user/<int:userId>/type2stats', UserType2StatsList.as_view()),
     path('api/user/<int:userId>/servicestats', UserServiceStatsList.as_view()),
