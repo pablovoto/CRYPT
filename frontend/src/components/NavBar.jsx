@@ -45,30 +45,22 @@ export default function Navbar(props) {
 
   const getUserRole = async (userId) => {
     try {
-      const studentResponse = await axios.get(`/students/${userId}/`);
-      if (studentResponse.data) {
+      const studentResponse = await axios.get(`/users/${userId}/`);
+      if (studentResponse.is_professor===false) {
         setUserRole('student');
+        return;
+      }
+      else {
+        setUserRole('professor');
         return;
       }
     } catch (error) {
       console.error('Error fetching student:', error);
     }
-  
-    try {
-      const professorResponse = await axios.get(`/professors/${userId}/`);
-      if (professorResponse.data) {
-        setUserRole('professor');
-        return;
-      }
-    } catch (error) {
-      console.error('Error fetching professor:', error);
-    }
-  
-    console.error('User is neither a student nor a professor');
-  };
+
   // Call getUserRole when the user logs in
   // Replace 'userId' with the actual user ID
-  getUserRole('userId');
+  getUserRole(localStorage.getItem('userId'));
 
 
 
