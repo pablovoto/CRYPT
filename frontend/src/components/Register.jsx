@@ -1,8 +1,8 @@
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import AxiosInstance from './Axios';
 
 
 const schema = yup.object().shape({
@@ -11,8 +11,8 @@ const schema = yup.object().shape({
   password: yup.string().required().min(8).max(20).matches(/(?=.*[0-9])(?=.*[A-Z])/),
   passwordConfirmation: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match'),
   userType: yup.string().required(),
-  first_name: yup.string().required(), // Add this line
-  last_name: yup.string().required() // Add this line
+  first_name: yup.string().required(),
+  last_name: yup.string().required()
 });
 
 const Register = () => {
@@ -20,25 +20,33 @@ const Register = () => {
     resolver: yupResolver(schema)
   });
 
+  const history = useNavigate();
+
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post('/register/', {
+      const studentResponse = await AxiosInstance.post('users/', {
         username: data.username,
         password: data.password,
         email: data.email,
-        first_name: data.first_name, // Add this line
-        last_name: data.last_name, // Add this line
-        user_type: 'student' // default user type
+        first_name: data.first_name,
+        last_name: data.last_name,
+        is_active: true,
+        is_staff: false,
+        is_professor: false,
       });
-
-      if (response.status === 200) {
-        // Handle successful registration here
-        console.log('User created, verification email sent');
+  
+      if (studentResponse.status === 201) {
+        console.log('Student and user created successfully');
+        history.push('/home'); // Redirect to home page
+      } else {
+        console.log(studentResponse.data.detail);
       }
     } catch (error) {
-      console.log('Registration failed');
+      console.log('An error occurred:', error.response.data);
     }
   };
+
+
 
   return (
     <div className="register-container">

@@ -4,6 +4,8 @@ import axios from 'axios'; // Assuming you're using axios for API calls
 function DriveStatComponent({ matchId, userId , name ,flag}) {
   const [stats, setStats] = useState({
     name: name,
+    match: matchId,
+    user: userId,
     total_drives: 0,
     cross: 0,
     parallel: 0,
@@ -34,7 +36,7 @@ function DriveStatComponent({ matchId, userId , name ,flag}) {
   } , [flag]);
 
   const saveStats = () => {
-    axios.put(`/api/stats/${matchId}/${userId}/${name}`, stats)
+    axios.post('drive_stat/', stats)
       .then(response => {
         console.log('Stats saved successfully:', response.data);
       })

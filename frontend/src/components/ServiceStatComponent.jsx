@@ -4,6 +4,8 @@ import axios from 'axios'; // Assuming you're using axios for API calls
 function ServiceStatComponent({ matchId, userId , name ,flag}) {
   const [stats, setStats] = useState({
     name: name,
+    match: matchId,
+    user: userId,
     total_services: 0,
     to_the_t: 0,
     open: 0,
@@ -34,7 +36,7 @@ function ServiceStatComponent({ matchId, userId , name ,flag}) {
   } , [flag]);
 
   const saveStats = () => {
-    axios.put(`/api/stats/${matchId}/${userId}/${name}`, stats)
+    axios.put(`/service_stat/`, stats)
       .then(response => {
         console.log('Stats saved successfully:', response.data);
       })

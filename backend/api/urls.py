@@ -5,30 +5,26 @@ from . import views
 
 
 router = DefaultRouter()
+router.register(r'users', UserViewSet , basename='users')
+router.register(r'students', StudentViewSet, basename='students')
+router.register(r'professors', ProfessorViewSet, basename='professors')
+
 router.register(r'project_manager', views.ProjectManagerViewset, basename='project_manager')
 router.register(r'project', views.ProjectViewset, basename='project')
+
+router.register(r'matches', MatchView, basename='matches')
+router.register(r'matchhistory/', MatchHistoryView, basename='matchhistory')
+
+
 router.register(r'drive_stat', views.DriveStatViewSet, basename='drive_stat')
 router.register(r'type2_stat', views.Type2StatViewSet, basename='type2_stat')
 router.register(r'service_stat', views.ServiceStatViewSet, basename='service_stat')
-router.register(r'students', StudentViewSet)
-router.register(r'professors', ProfessorViewSet)
-router.register(r'matches', MatchView, basename='matches')
-router.register(r'matches/(?P<matchId>\d+)/history', MatchHistoryView, basename='matchhistory')
-router.register(r'matches/(?P<matchId>\d+)', MatchView, basename='match')
-router.register(r'stats/(?P<matchId>\d+)/(?P<userId>\d+)/(?P<name>\w+)', DriveStatViewSet, basename='drive_stat')
-router.register(r'stats/(?P<matchId>\d+)/(?P<userId>\d+)/(?P<name>\w+)', Type2StatViewSet, basename='type2_stat')
-router.register(r'stats/(?P<matchId>\d+)/(?P<userId>\d+)/(?P<name>\w+)', ServiceStatViewSet, basename='service_stat')
-
 
 
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('login/', views.LoginView.as_view(), name='login'),
-    path('register/', views.RegisterView.as_view(), name='register'),
-    path('logout/', views.LogoutView.as_view(), name='logout'),
-
-    path('api/user/<int:userId>/drivestats', UserDriveStatsList.as_view()),
-    path('api/user/<int:userId>/type2stats', UserType2StatsList.as_view()),
-    path('api/user/<int:userId>/servicestats', UserServiceStatsList.as_view()),
+    path('drivestats/<int:userId>/', UserDriveStatsList.as_view(), name='drivestats'),
+    path('type2stats/<int:userId>/', UserType2StatsList.as_view(), name='type2stats'),
+    path('servicestats/<int:userId>/', UserServiceStatsList.as_view(), name='servicestats'),
 ]

@@ -63,25 +63,43 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
             player2Sets,
             isTieBreaker: newIsTieBreaker
         }]);
+        axios.post(`matchhistory/`, {
+            match : matchId,
+            player1_score: player1Score,
+            player2_score: player2Score,
+            player1_games: player1Games,
+            player2_games: player2Games,
+            player1_sets: player1Sets,
+            player2_sets: player2Sets,
+            is_tiebreaker: isTieBreaker,
+        });
     };
 
     const decrementScore = () => {
-    if (history.length > 0) {
-        // Remove the last entry from the history
-        const newHistory = history.slice(0, -1);
-        setHistory(newHistory);
-
-        // Restore the state to the previous entry
-        const lastEntry = newHistory[newHistory.length - 1];
-        setPlayer1Score(lastEntry.player1Score);
-        setPlayer2Score(lastEntry.player2Score);
-        setPlayer1Games(lastEntry.player1Games);
-        setPlayer2Games(lastEntry.player2Games);
-        setPlayer1Sets(lastEntry.player1Sets);
-        setPlayer2Sets(lastEntry.player2Sets);
-        setIsTieBreaker(lastEntry.isTieBreaker);
-    }
-};
+        if (history.length > 0) {
+            // Remove the last entry from the history
+            const newHistory = history.slice(0, -1);
+            setHistory(newHistory);
+    
+            // Define the last entry
+            const lastEntry = history[history.length - 1];
+    
+            // Delete the last entry on the server
+            axios.delete(`matchhistory/${lastEntry.id}/`);
+    
+            // If there are still entries in the history, restore the state to the previous entry
+            if (newHistory.length > 0) {
+                const previousEntry = newHistory[newHistory.length - 1];
+                setPlayer1Score(previousEntry.player1Score);
+                setPlayer2Score(previousEntry.player2Score);
+                setPlayer1Games(previousEntry.player1Games);
+                setPlayer2Games(previousEntry.player2Games);
+                setPlayer1Sets(previousEntry.player1Sets);
+                setPlayer2Sets(previousEntry.player2Sets);
+                setIsTieBreaker(previousEntry.isTieBreaker);
+            }
+        }
+    };
     
     const scoreOptions = [0, 15, 30, 40, 'AD'];
 
@@ -122,15 +140,15 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
     }, [flag]);
 
     const endMatch = () => {
-        if (window.confirm('Are you sure you want to end the match?')) {
-                axios.post(`/api/matches/${matchId}/`, {
+                axios.put(`matches`, {
                     sets_won: player1Sets,
                     games_won: player1Games,
                     points_won: player1Score,
                     user_id: userId,
-                } 
-                );
-                axios.post(`/api/matches/${matchId}/history/`, {
+                    match_id: matchId,
+                });
+                axios.post(`matchhistory/`, {
+                    match : matchId,
                     player1_score: player1Score,
                     player2_score: player2Score,
                     player1_games: player1Games,
@@ -147,7 +165,7 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
             setPlayer1Sets(0);
             setPlayer2Sets(0);
             setIsTieBreaker(false);
-        }
+            setHistory([]);
     };
 
     const incrementGames = (playerGamesSetter) => {

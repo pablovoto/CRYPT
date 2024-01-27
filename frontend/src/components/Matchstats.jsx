@@ -20,7 +20,12 @@ function MatchStats() {
 
   // Create a new match when the component mounts
   useEffect(() => {
-    axios.post('/api/match', { userId })
+    axios.post('/matches/', { 
+      user: userId,
+      sets_won: 0,
+      games_won: 0,
+      points_won: 0
+      })
       .then(response => {
         setMatchId(response.data.matchId);
       })
