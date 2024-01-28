@@ -11,6 +11,7 @@ import UserStats from './components/Userstats';
 import Login from './components/Login';
 import Register from './components/Register';
 import Logout from './components/Logout';
+import MatchStats2 from './components/Matchstats2';
 function App() {
   
   const myWidth = 220
@@ -30,7 +31,7 @@ function App() {
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/logout" element={<Logout/>}/>
-                
+                <Route path="/matchstats2" element={<MatchStats2/>}/>
               </Routes>
             }
         

@@ -129,7 +129,7 @@ export default function Navbar(props) {
                   <ListItemIcon>
                     <AddchartIcon/>
                   </ListItemIcon>
-                  <ListItemText primary={"Match Stats"} />
+                  <ListItemText primary={"Add match"} />
                 </ListItemButton>
               </ListItem>
             )}
@@ -156,6 +156,16 @@ export default function Navbar(props) {
               </ListItem>
           )}
 
+          {isLoggedIn && userRole === 'professor' && (
+              <ListItem disablePadding>
+                <ListItemButton component={Link} to="/matchstats2" selected={"/matchstats2" === path}>
+                  <ListItemIcon>
+                    <AddchartIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={"Add match"} />
+                </ListItemButton>
+              </ListItem>
+            )}
 
         </List>
     
