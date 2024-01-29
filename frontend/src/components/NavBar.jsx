@@ -57,7 +57,7 @@ export default function Navbar(props) {
     } catch (error) {
       console.error('Error fetching student:', error);
     }
-
+  }
   // Call getUserRole when the user logs in
   // Replace 'userId' with the actual user ID
   getUserRole(localStorage.getItem('userId'));
@@ -227,3 +227,4 @@ export default function Navbar(props) {
     </Box>
   );
 }
+

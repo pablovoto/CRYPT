@@ -24,6 +24,7 @@ router.register(r'service_stat', views.ServiceStatViewSet, basename='service_sta
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('login/', LoginView.as_view(), name='login'),
     path('drivestats/<int:userId>/', UserDriveStatsList.as_view(), name='drivestats'),
     path('type2stats/<int:userId>/', UserType2StatsList.as_view(), name='type2stats'),
     path('servicestats/<int:userId>/', UserServiceStatsList.as_view(), name='servicestats'),

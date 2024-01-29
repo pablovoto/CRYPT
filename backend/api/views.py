@@ -1,10 +1,11 @@
 # Django imports
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 # Third-party imports
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.views import APIView
 
 # Local imports
 from .models import *
@@ -101,7 +102,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user = serializer.save()
 
-        if serializer.validated_data.get('is_professor', False):
+        if serializer.validated_data.get('is_professor', True):
             Professor.objects.create(user=user)
         else:
             Student.objects.create(user=user)
@@ -109,9 +110,36 @@ class UserViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         user = serializer.save()
 
-        if serializer.validated_data.get('is_professor', False) and not Professor.objects.filter(user=user).exists():
+        if serializer.validated_data.get('is_professor', True) and not Professor.objects.filter(user=user).exists():
             Professor.objects.create(user=user)
+        elif not serializer.validated_data.get('is_professor', True) and not Student.objects.filter(user=user).exists():
+            Student.objects.create(user=user)
 
+class LoginView(APIView):
+    def post(self, request, format=None):
+        data = request.data
+
+        username_or_email = data.get('username_or_email', None)
+        password = data.get('password', None)
+
+        if username_or_email is None or password is None:
+            return Response({'error': 'Please provide both username/email and password'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(username=username_or_email, password=password)
+
+        if user is None:
+            try:
+                user = User.objects.get(email=username_or_email)
+                if user.check_password(password):
+                    return Response({'success': 'Login successful'}, status=status.HTTP_200_OK)
+            except User.DoesNotExist:
+                pass
+
+            return Response({'error': 'Invalid username/email or password'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'success': 'Login successful'}, status=status.HTTP_200_OK)
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
