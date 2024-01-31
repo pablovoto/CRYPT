@@ -9,6 +9,38 @@ import {Link} from 'react-router-dom'
 
 const Home = () => {
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      setIsLoggedIn(true);
+    }
+    else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
+  const [userRole, setUserRole] = useState(null);
+
+  const getUserRole = async (userId) => {
+    try {
+      const studentResponse = await axios.get(`/users/${userId}/`);
+      if (studentResponse.is_professor===false) {
+        setUserRole('student');
+        return;
+      }
+      else {
+        setUserRole('professor');
+        return;
+      }
+    } catch (error) {
+      console.error('Error fetching student:', error);
+    }
+  }
+  // Call getUserRole when the user logs in
+  // Replace 'userId' with the actual user ID
+  getUserRole(localStorage.getItem('userId'));
+
 
   const [myData,setMydata] = useState()
   const [loading,setLoading] = useState(true)
@@ -63,24 +95,19 @@ const Home = () => {
     <div>
         { loading ? <p>Loading data...</p> :
         <MaterialReactTable 
-            columns={columns} 
-            data={myData} 
-            enableRowActions
-            renderRowActions={({row}) => (
-              <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-
-                  <IconButton color="secondary" component={Link} to={`edit/${row.original.id}`}>
-                    <EditIcon />
-                  </IconButton>
-
-                  <IconButton color="error" component={Link} to={`delete/${row.original.id}`}>
-                      <DeleteIcon />
-                  </IconButton>
-            </Box>
-      )}
-            
-            
-            />
+        columns={columns} 
+        data={myData}
+        renderRowActions={isLoggedIn && userRole === 'professor' ? ({row}) => (
+          <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
+            <IconButton color="secondary" component={Link} to={`edit/${row.original.id}`}>
+              <EditIcon />
+            </IconButton>
+            <IconButton color="error" component={Link} to={`delete/${row.original.id}`}>
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        ) : null}
+      />
         }
     </div>
   )

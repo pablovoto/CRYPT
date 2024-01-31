@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import AxiosInstance from './Axios';
 import DriveStatComponent from './DriveStatComponent';
 import TennisScoreComponent from './TennisScoreComponent';
 import ServiceStatComponent from './ServiceStatComponent';
@@ -25,7 +25,7 @@ function MatchStats2() {
 
   // Fetch students when the component mounts
   useEffect(() => {
-    axios.get('students/')
+    AxiosInstance.get('students/')
       .then(response => {
         setStudents(response.data);
       })
@@ -37,7 +37,7 @@ function MatchStats2() {
   // Create a new match when the component mounts
   useEffect(() => {
     if (selectedUserId) {
-      axios.post('/matches/', { 
+      AxiosInstance.post('/matches/', { 
         user: selectedUserId,
         sets_won: 0,
         games_won: 0,

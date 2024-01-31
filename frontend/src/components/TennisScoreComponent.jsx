@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import AxiosInstance from './Axios';
 
 const TennisScoreComponent = ({ matchId, userId ,flag }) => {
     const [player1Score, setPlayer1Score] = useState(0);
@@ -63,7 +63,7 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
             player2Sets,
             isTieBreaker: newIsTieBreaker
         }]);
-        axios.post(`matchhistory/`, {
+        AxiosInstance.post(`matchhistory/`, {
             match : matchId,
             player1_score: player1Score,
             player2_score: player2Score,
@@ -85,7 +85,7 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
             const lastEntry = history[history.length - 1];
     
             // Delete the last entry on the server
-            axios.delete(`matchhistory/${lastEntry.id}/`);
+            AxiosInstance.delete(`matchhistory/${lastEntry.id}/`);
     
             // If there are still entries in the history, restore the state to the previous entry
             if (newHistory.length > 0) {
@@ -140,14 +140,14 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
     }, [flag]);
 
     const endMatch = () => {
-                axios.put(`matches`, {
+        AxiosInstance.put(`matches`, {
                     sets_won: player1Sets,
                     games_won: player1Games,
                     points_won: player1Score,
                     user_id: userId,
                     match_id: matchId,
                 });
-                axios.post(`matchhistory/`, {
+                AxiosInstance.post(`matchhistory/`, {
                     match : matchId,
                     player1_score: player1Score,
                     player2_score: player2Score,

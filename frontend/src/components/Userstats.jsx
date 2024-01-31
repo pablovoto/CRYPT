@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import AxiosInstance from './Axios';
 
 function UserStats() {
   const userId = localStorage.getItem('userId');
@@ -9,12 +9,12 @@ function UserStats() {
 
   // Fetch the stats when the component mounts
   useEffect(() => {
-    axios.all([
-      axios.get(`drivestats/${userId}/`),
-      axios.get(`type2stats/${userId}/`),
-      axios.get(`servicestats/${userId}/`)
+    AxiosInstance.all([
+      AxiosInstance.get(`drivestats/${userId}/`),
+      AxiosInstance.get(`type2stats/${userId}/`),
+      AxiosInstance.get(`servicestats/${userId}/`)
     ])
-    .then(axios.spread((driveRes, type2Res, serviceRes) => {
+    .then(AxiosInstance.spread((driveRes, type2Res, serviceRes) => {
       setDriveStats(driveRes.data);
       setType2Stats(type2Res.data);
       setServiceStats(serviceRes.data);

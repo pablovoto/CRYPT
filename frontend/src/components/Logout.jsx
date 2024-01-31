@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Modal from 'react-modal';
-import axios from 'axios';
+import AxiosInstance from './Axios';
 
 Modal.setAppElement('#root'); // replace '#root' with the id of your app's root element
 
@@ -17,7 +17,7 @@ const Logout = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get('/logout/'); // replace with your logout endpoint
+      const response = await AxiosInstance.get('/logout/'); // replace with your logout endpoint
       if (response.status === 200) {
         // Handle successful logout here
         console.log('Logged out');

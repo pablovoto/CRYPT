@@ -22,7 +22,7 @@ import { useState , useEffect } from 'react';
 import LogoutIcon from '@mui/icons-material/Logout';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import AddchartIcon from '@mui/icons-material/Addchart';
-import axios from 'axios';
+import AxiosInstance from './Axios';
 
 export default function Navbar(props) {
   const {drawerWidth, content} = props
@@ -45,7 +45,7 @@ export default function Navbar(props) {
 
   const getUserRole = async (userId) => {
     try {
-      const studentResponse = await axios.get(`/users/${userId}/`);
+      const studentResponse = await AxiosInstance.get(`/users/${userId}/`);
       if (studentResponse.is_professor===false) {
         setUserRole('student');
         return;
@@ -92,15 +92,6 @@ export default function Navbar(props) {
                 </ListItemButton>
             </ListItem>
 
-            <ListItem disablePadding>
-                <ListItemButton component={Link} to="/create" selected={"/create" === path}>
-                <ListItemIcon>
-                        <BorderColorIcon/>
-                </ListItemIcon>
-                <ListItemText primary={"Create"} />
-                </ListItemButton>
-            </ListItem>
-            
             {!isLoggedIn && (
         <ListItem disablePadding>
             <ListItemButton component={Link} to="/login" selected={"/login" === path}>
@@ -165,6 +156,17 @@ export default function Navbar(props) {
                   <ListItemText primary={"Add match"} />
                 </ListItemButton>
               </ListItem>
+            )}
+
+            {isLoggedIn && userRole === 'professor' && (
+              <ListItem disablePadding>
+              <ListItemButton component={Link} to="/create" selected={"/create" === path}>
+              <ListItemIcon>
+                      <BorderColorIcon/>
+              </ListItemIcon>
+              <ListItemText primary={"Create"} />
+              </ListItemButton>
+          </ListItem>
             )}
 
         </List>

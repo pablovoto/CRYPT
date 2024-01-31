@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import AxiosInstance from './Axios';
 import DriveStatComponent from './DriveStatComponent';
 import TennisScoreComponent from './TennisScoreComponent';
 import ServiceStatComponent from './ServiceStatComponent';
@@ -20,7 +20,7 @@ function MatchStats() {
 
   // Create a new match when the component mounts
   useEffect(() => {
-    axios.post('/matches/', { 
+    AxiosInstance.post('/matches/', { 
       user: userId,
       sets_won: 0,
       games_won: 0,

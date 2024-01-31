@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios'; // Assuming you're using axios for API calls
+import AxiosInstance from './Axios'; // Assuming you're using axios for API calls
 
 function ServiceStatComponent({ matchId, userId , name ,flag}) {
   const [stats, setStats] = useState({
@@ -36,7 +36,7 @@ function ServiceStatComponent({ matchId, userId , name ,flag}) {
   } , [flag]);
 
   const saveStats = () => {
-    axios.put(`/service_stat/`, stats)
+    AxiosInstance.put(`/service_stat/`, stats)
       .then(response => {
         console.log('Stats saved successfully:', response.data);
       })

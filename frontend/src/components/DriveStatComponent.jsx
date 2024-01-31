@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios'; // Assuming you're using axios for API calls
+import AxiosInstance from './Axios'; // Assuming you're using axios for API calls
 
 function DriveStatComponent({ matchId, userId , name ,flag}) {
   const [stats, setStats] = useState({
@@ -36,7 +36,7 @@ function DriveStatComponent({ matchId, userId , name ,flag}) {
   } , [flag]);
 
   const saveStats = () => {
-    axios.post('drive_stat/', stats)
+    AxiosInstance.post('drive_stat/', stats)
       .then(response => {
         console.log('Stats saved successfully:', response.data);
       })

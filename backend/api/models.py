@@ -51,14 +51,6 @@ class Match(models.Model):
     sets_won = models.IntegerField()
     games_won = models.IntegerField()
     points_won = models.IntegerField()
-
-    def save(self, *args, **kwargs):
-        if hasattr(self, 'request_user'):
-            if Professor.objects.filter(user=self.request_user).exists() or \
-               (Student.objects.filter(user=self.request_user).exists() and self.user == self.request_user):
-                super().save(*args, **kwargs)
-            else:
-                raise PermissionError("You do not have permission to add this match.")
     
     def __str__(self):
         return self.user.username
