@@ -10,9 +10,9 @@ function UserStats() {
   // Fetch the stats when the component mounts
   useEffect(() => {
     AxiosInstance.all([
-      AxiosInstance.get(`drivestats/${userId}/`),
-      AxiosInstance.get(`type2stats/${userId}/`),
-      AxiosInstance.get(`servicestats/${userId}/`)
+      AxiosInstance.get(`drive_stat/${userId}/`),
+      AxiosInstance.get(`type2_stat/${userId}/`),
+      AxiosInstance.get(`service_stat/${userId}/`)
     ])
     .then(AxiosInstance.spread((driveRes, type2Res, serviceRes) => {
       setDriveStats(driveRes.data);

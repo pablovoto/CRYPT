@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import AxiosInstance from './AxiosInstance'; // import your Axios instance
+import AxiosInstance from './Axios'; // import your Axios instance
+import { Box, IconButton } from '@mui/material';
+import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import {Link} from 'react-router-dom'
+
 
 const ProductCatalog = () => {
   const [products, setProducts] = useState([]);
@@ -23,18 +27,6 @@ const ProductCatalog = () => {
     getProducts();
   }, [currentPage]);
 
-  const handleAddProduct = (product) => {
-    // Add product to your database
-  };
-
-  const handleEditProduct = (productId, updatedProduct) => {
-    // Edit product in your database
-  };
-
-  const handleDeleteProduct = (productId) => {
-    // Delete product from your database
-  };
-
   const handleNextPage = () => {
     setCurrentPage(currentPage + 1);
   };
@@ -54,11 +46,16 @@ const ProductCatalog = () => {
         <div key={product.id}>
           <h2>{product.name}</h2>
           <p>{product.description}</p>
-          <button onClick={() => handleEditProduct(product.id)}>Edit</button>
-          <button onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+          <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
+            <IconButton color="secondary" component={Link} to={`edit/${product.original.id}`}>
+              <EditIcon />
+            </IconButton>
+            <IconButton color="error" component={Link} to={`delete/${product.original.id}`}>
+              <DeleteIcon />
+            </IconButton>
+          </Box>
         </div>
       ))}
-      <button onClick={handleAddProduct}>Add Product</button>
       <button onClick={handlePreviousPage} disabled={currentPage === 1}>Previous Page</button>
       <button onClick={handleNextPage}>Next Page</button>
     </div>

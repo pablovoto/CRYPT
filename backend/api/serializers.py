@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import * 
-from django.contrib.auth.models import User
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta: 
         model = Project
@@ -113,4 +114,15 @@ class ProfessorSerializer(serializers.ModelSerializer):
         model = Professor
         fields = ['user']
         
-        
+class ProductSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'description', 'image', 'image_url']
+
+    def get_image_url(self, obj):
+        if obj.image and hasattr(obj.image, 'url'):
+            return obj.image.url
+        else:
+            return None

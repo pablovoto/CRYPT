@@ -3,9 +3,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
 # Third-party imports
-from rest_framework import viewsets, permissions, generics, status
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # Local imports
 from .models import *
@@ -74,27 +75,6 @@ class MatchHistoryView(viewsets.ModelViewSet):
             return MatchHistory.objects.filter(match__id=matchId).order_by('timestamp')
         return MatchHistory.objects.all().order_by('timestamp')
     
-class UserDriveStatsList(generics.ListAPIView):
-    serializer_class = DriveStatSerializer
-
-    def get_queryset(self):
-        userId = self.kwargs['userId']
-        return DriveStat.objects.filter(user=userId)
-
-class UserType2StatsList(generics.ListAPIView):
-    serializer_class = Type2StatSerializer
-
-    def get_queryset(self):
-        userId = self.kwargs['userId']
-        return Type2Stat.objects.filter(user=userId)
-
-class UserServiceStatsList(generics.ListAPIView):
-    serializer_class = ServiceStatSerializer
-
-    def get_queryset(self):
-        userId = self.kwargs['userId']
-        return ServiceStat.objects.filter(user=userId)
-    
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -152,61 +132,44 @@ class DriveStatViewSet(viewsets.ModelViewSet):
     serializer_class = DriveStatSerializer
 
     def get_queryset(self):
-        matchId = self.kwargs.get('matchId')
-        userId = self.kwargs.get('userId')
-        name = self.kwargs.get('name')
-
-        queryset = DriveStat.objects.all()
-
-        if matchId is not None:
-            queryset = queryset.filter(match__id=matchId)
-
+        userId = self.request.query_params.get('userId', None)
         if userId is not None:
-            queryset = queryset.filter(user__id=userId)
-
-        if name is not None:
-            queryset = queryset.filter(name=name)
-
-        return queryset
+            return DriveStat.objects.filter(userId=userId)
+        return DriveStat.objects.all()
 
 class Type2StatViewSet(viewsets.ModelViewSet):
     serializer_class = Type2StatSerializer
 
     def get_queryset(self):
-        matchId = self.kwargs.get('matchId')
-        userId = self.kwargs.get('userId')
-        name = self.kwargs.get('name')
-
-        queryset = Type2Stat.objects.all()
-
-        if matchId is not None:
-            queryset = queryset.filter(match__id=matchId)
-
+        userId = self.request.query_params.get('userId', None)
         if userId is not None:
-            queryset = queryset.filter(user__id=userId)
-
-        if name is not None:
-            queryset = queryset.filter(name=name)
-
-        return queryset
+            return Type2Stat.objects.filter(userId=userId)
+        return Type2Stat.objects.all()
 
 class ServiceStatViewSet(viewsets.ModelViewSet):
     serializer_class = ServiceStatSerializer
 
     def get_queryset(self):
-        matchId = self.kwargs.get('matchId')
-        userId = self.kwargs.get('userId')
-        name = self.kwargs.get('name')
-
-        queryset = ServiceStat.objects.all()
-
-        if matchId is not None:
-            queryset = queryset.filter(match__id=matchId)
-
+        userId = self.request.query_params.get('userId', None)
         if userId is not None:
-            queryset = queryset.filter(user__id=userId)
+            return ServiceStat.objects.filter(userId=userId)
+        return ServiceStat.objects.all()
 
-        if name is not None:
-            queryset = queryset.filter(name=name)
+class ProductView(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    parser_classes = (MultiPartParser, FormParser)
 
-        return queryset
+    def post(self, request, *args, **kwargs):
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
