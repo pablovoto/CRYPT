@@ -25,4 +25,5 @@ router.register(r'products', ProductView, basename='products')
 urlpatterns = [
     path('', include(router.urls)),
     path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
 ]

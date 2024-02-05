@@ -30,6 +30,9 @@ INSTALLED_APPS = [
     'api'
 ]
 
+AUTH_USER_MODEL = 'api.Usuario'
+
+AUTHENTICATION_BACKENDS = ['api.views.UsernameOrEmailBackend']
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

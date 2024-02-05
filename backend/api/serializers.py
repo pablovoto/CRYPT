@@ -17,7 +17,7 @@ class MatchSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
     class Meta:
         model = Match
-        fields = ['user', 'sets_won', 'games_won', 'points_won']
+        fields = ['id','user', 'sets_won', 'games_won', 'points_won']
 
 class DriveStatSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
@@ -74,7 +74,7 @@ class UserSerializer(serializers.ModelSerializer):
     is_professor = serializers.BooleanField(write_only=True, default=False)
 
     class Meta:
-        model = User
+        model = Usuario
         fields = ['username', 'email', 'first_name', 'last_name', 'password', 'is_professor']
         extra_kwargs = {
             'password': {'write_only': True},
@@ -83,7 +83,7 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         is_professor = validated_data.pop('is_professor')
         password = validated_data.pop('password')
-        user = User(**validated_data)
+        user = Usuario(**validated_data)
         user.set_password(password)
         user.save()
 
@@ -103,13 +103,13 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
     
 class StudentSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    user = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.all())
     class Meta:
         model = Student
         fields = ['user']
 
 class ProfessorSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    user = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.all())
     class Meta:
         model = Professor
         fields = ['user']

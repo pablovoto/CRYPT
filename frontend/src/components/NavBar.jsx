@@ -1,68 +1,70 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import AppBar from '@mui/material/AppBar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
-import {Link, useLocation} from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import { IconButton } from '@mui/material';
+
+import AxiosInstance from './Axios';
+
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import MenuIcon from '@mui/icons-material/Menu';
-import { IconButton } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
-import { useState , useEffect } from 'react';
 import LogoutIcon from '@mui/icons-material/Logout';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import AddchartIcon from '@mui/icons-material/Addchart';
-import AxiosInstance from './Axios';
 
 export default function Navbar(props) {
   const {drawerWidth, content} = props
   const location = useLocation()
   const path = location.pathname
-
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const userId = Number(localStorage.getItem('user_id'));
+
   useEffect(() => {
-    const userId = localStorage.getItem('userId');
     if (userId) {
       setIsLoggedIn(true);
     }
     else {
       setIsLoggedIn(false);
     }
-  }, []);
+  }, [userId]);
 
-  const [userRole, setUserRole] = useState(null);
+  const userRole= localStorage.getItem('user_role');
+  
 
-  const getUserRole = async (userId) => {
+  const handleLogout = async () => {
     try {
-      const studentResponse = await AxiosInstance.get(`/users/${userId}/`);
-      if (studentResponse.is_professor===false) {
-        setUserRole('student');
-        return;
-      }
-      else {
-        setUserRole('professor');
-        return;
+      const response = await AxiosInstance.get('/logout/'); // replace with your logout endpoint
+      if (response.status === 200) {
+        // Handle successful logout here
+        console.log('Logged out');
+        localStorage.removeItem('user_id');
+        setIsLoggedIn(false); // Update the isLoggedIn state
+        navigate('/');
+      } else {
+        console.log('Logout failed with status:', response.status);
       }
     } catch (error) {
-      console.error('Error fetching student:', error);
+      console.log('Logout request failed:', error);
     }
-  }
-  // Call getUserRole when the user logs in
-  // Replace 'userId' with the actual user ID
-  getUserRole(localStorage.getItem('userId'));
-
-
+  };
 
   const changeOpenStatus = () => {
     setOpen(!open)
@@ -138,7 +140,7 @@ export default function Navbar(props) {
 
           {isLoggedIn && (
               <ListItem disablePadding>
-                  <ListItemButton component={Link} to="/logout" selected={"/logout" === path}>
+                  <ListItemButton onClick={handleLogout}>
                       <ListItemIcon>
                           <LogoutIcon/>
                       </ListItemIcon>

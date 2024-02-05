@@ -7,7 +7,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-
+  
   const handleLogin = async (event) => {
     event.preventDefault();
   
@@ -19,7 +19,10 @@ function Login() {
   
       if (response.data.success) {
         // Login successful, redirect or do something
-        navigate.push('/userstats');
+        localStorage.setItem('user_id', response.data.user_id);
+        localStorage.setItem('user_role', response.data.user_role);
+        localStorage.setItem('student_id', response.data.student_id);
+        navigate('/');
       } else {
         // Login failed, set error message
         setError(response.data.error);

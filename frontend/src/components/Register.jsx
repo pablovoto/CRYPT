@@ -1,29 +1,33 @@
-import { Link, useNavigate  } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import AxiosInstance from './Axios';
-
+import AxiosInstance from './Axios'; // replace with your Axios instance
+import { useNavigate } from 'react-router-dom';
 
 const schema = yup.object().shape({
-  username: yup.string().required().max(30),
-  email: yup.string().required().email(),
-  password: yup.string().required().min(8).max(20).matches(/(?=.*[0-9])(?=.*[A-Z])/),
-  passwordConfirmation: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match'),
-  userType: yup.string().required(),
-  first_name: yup.string().required(),
-  last_name: yup.string().required()
+  username: yup.string().required('Username is required'),
+  password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters long'),
+  passwordConfirmation: yup.string()
+    .oneOf([yup.ref('password'), null], 'Passwords must match'),
+  email: yup.string().required('Email is required').email('Email is not valid'),
+  first_name: yup.string().required('First name is required'),
+  last_name: yup.string().required('Last name is required'),
 });
 
 const Register = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const history = useNavigate();
+  const { register,handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
 
-  const history = useNavigate();
+  useEffect(() => {
+    console.log('Register component mounted');
+  }, []);
 
   const onSubmit = async (data) => {
     try {
+      console.log("Form submitted", data);
       const studentResponse = await AxiosInstance.post('users/', {
         username: data.username,
         password: data.password,
@@ -34,7 +38,7 @@ const Register = () => {
         is_staff: false,
         is_professor: false,
       });
-  
+
       if (studentResponse.status === 201) {
         console.log('Student and user created successfully');
         history.push('/home'); // Redirect to home page
@@ -46,45 +50,27 @@ const Register = () => {
     }
   };
 
-
-
   return (
-    <div className="register-container">
-      <form onSubmit={handleSubmit(onSubmit)} className="register-form">
-        <label>
-          Username:
-          <input type="text" {...register('username')} />
-          {errors.username && <p>{errors.username.message}</p>}
-        </label>
-        <label>
-          Email:
-          <input type="email" {...register('email')} />
-          {errors.email && <p>{errors.email.message}</p>}
-        </label>
-        <label>
-        First Name:
-        <input type="text" {...register('first_name')} />
-        {errors.first_name && <p>{errors.first_name.message}</p>}
-      </label>
-      <label>
-        Last Name:
-        <input type="text" {...register('last_name')} />
-        {errors.last_name && <p>{errors.last_name.message}</p>}
-      </label>
-        <label>
-          Password:
-          <input type="password" {...register('password')} />
-          {errors.password && <p>{errors.password.message}</p>}
-        </label>
-        <label>
-          Confirm Password:
-          <input type="password" {...register('passwordConfirmation')} />
-          {errors.passwordConfirmation && <p>{errors.passwordConfirmation.message}</p>}
-        </label>
-        <button type="submit">Register</button>
-      </form>
-      <p>Already have an account? <Link to="/login">Click here</Link> to log in.</p>
-    </div>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register('username')} placeholder="Username" />
+      {errors.username && <p>{errors.username.message}</p>}
+
+      <input {...register('password')} type="password" placeholder="Password" />
+      {errors.password && <p>{errors.password.message}</p>}
+
+      <input {...register('passwordConfirmation')} type="password" placeholder="Confirm Password" />
+      {errors.passwordConfirmation && <p>{errors.passwordConfirmation.message}</p>}
+
+      <input {...register('email')} placeholder="Email" />
+      {errors.email && <p>{errors.email.message}</p>}
+
+      <input {...register('first_name')} placeholder="First Name" />
+      {errors.first_name && <p>{errors.first_name.message}</p>}
+
+      <input {...register('last_name')} placeholder="Last Name" />
+      {errors.last_name && <p>{errors.last_name.message}</p>}
+      <button type="submit">Register</button>
+    </form>
   );
 };
 

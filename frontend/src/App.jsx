@@ -10,7 +10,6 @@ import MatchStats from './components/Matchstats';
 import UserStats from './components/Userstats';
 import Login from './components/Login';
 import Register from './components/Register';
-import Logout from './components/Logout';
 import MatchStats2 from './components/Matchstats2';
 import DeleteProduct from './components/DeleteProduct';
 import EditProduct from './components/EditProduct';
@@ -36,14 +35,12 @@ function App() {
                 <Route path="/userstats" element={<UserStats/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
-                <Route path="/logout" element={<Logout/>}/>
                 <Route path="/matchstats2" element={<MatchStats2/>}/>
                 <Route path="/deleteproduct/:id" element={<DeleteProduct/>}/>
                 <Route path="/editproduct/:id" element={<EditProduct/>}/>
                 <Route path="/catalog" element={<ProductCatalog/>}/>
                 <Route path="/createproduct" element={<CreateProduct/>}/>
                 <Route path="/displayprojects" element={<DisplayProjects/>}/>
-                
               </Routes>
             }
         

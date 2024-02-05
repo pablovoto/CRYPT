@@ -1,6 +1,6 @@
 # Django imports
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth import get_user_model, login, authenticate, logout
 
 # Third-party imports
 from rest_framework import viewsets, permissions, status
@@ -11,6 +11,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 # Local imports
 from .models import *
 from .serializers import *
+from .serializers import MatchSerializer
+
 
 class ProjectManagerViewset(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
@@ -64,8 +66,11 @@ class MatchView(viewsets.ModelViewSet):
     serializer_class = MatchSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
+        user_id = self.request.data.get('user')
+        user = Student.objects.get(id=user_id)
+        serializer.save(user=user)
+    
+    
 class MatchHistoryView(viewsets.ModelViewSet):
     serializer_class = MatchHistorySerializer
 
@@ -76,7 +81,7 @@ class MatchHistoryView(viewsets.ModelViewSet):
         return MatchHistory.objects.all().order_by('timestamp')
     
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = Usuario.objects.all()
     serializer_class = UserSerializer
 
     def perform_create(self, serializer):
@@ -95,31 +100,51 @@ class UserViewSet(viewsets.ModelViewSet):
         elif not serializer.validated_data.get('is_professor', True) and not Student.objects.filter(user=user).exists():
             Student.objects.create(user=user)
 
+class UsernameOrEmailBackend(ModelBackend):
+    def authenticate(self, request, username=None, password=None, **kwargs):
+        UserModel = get_user_model()
+        try:
+            user = UserModel.objects.get(email=username)
+        except UserModel.DoesNotExist:
+            try:
+                user = UserModel.objects.get(username=username)
+            except UserModel.DoesNotExist:
+                print(f"No user found with username/email: {username}")  # Print statement
+                return None
+
+        if user.check_password(password):
+            print(f"Authenticated user: {user.username}")  # Print statement
+            return user
+        else:
+            print(f"Failed password check for user: {user.username}")  # Print statement
+
+    def get_user(self, user_id):
+        UserModel = get_user_model()
+        try:
+            return UserModel.objects.get(pk=user_id)
+        except UserModel.DoesNotExist:
+            return None
 class LoginView(APIView):
     def post(self, request, format=None):
         data = request.data
-
         username_or_email = data.get('username_or_email', None)
         password = data.get('password', None)
 
-        if username_or_email is None or password is None:
-            return Response({'error': 'Please provide both username/email and password'},
-                            status=status.HTTP_400_BAD_REQUEST)
+        user = authenticate(request, username=username_or_email, password=password)
 
-        user = authenticate(username=username_or_email, password=password)
+        if user is not None:
+            login(request, user)
+            user_role = 'professor' if (user.is_professor) else 'student'
+            student_id = user.student.id if user_role == 'student' else None
+            return Response({'success': True, 'user_id': user.id, 'user_role': user_role, 'student_id': student_id})
+        else:
+            return Response({'success': False, 'error': 'Invalid username or password'}, status=400)
 
-        if user is None:
-            try:
-                user = User.objects.get(email=username_or_email)
-                if user.check_password(password):
-                    return Response({'success': 'Login successful'}, status=status.HTTP_200_OK)
-            except User.DoesNotExist:
-                pass
+class LogoutView(APIView):
+    def get(self, request):
+        logout(request)
+        return Response({'success': True}, status=status.HTTP_200_OK)
 
-            return Response({'error': 'Invalid username/email or password'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        return Response({'success': 'Login successful'}, status=status.HTTP_200_OK)
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer

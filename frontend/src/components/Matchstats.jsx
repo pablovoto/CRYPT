@@ -5,9 +5,10 @@ import TennisScoreComponent from './TennisScoreComponent';
 import ServiceStatComponent from './ServiceStatComponent';
 import Type2StatComponent from './Type2StatComponent';
 
+
 function MatchStats() {
   const [matchId, setMatchId] = useState(null);
-  const userId = localStorage.getItem('userId');
+  const userId =Number(localStorage.getItem('student_id')) ;
   const driveNames =['winners', 'unforced_errors', 'forced_errors',  'points_won', 'points_lost', 'swing'];	
   const serviceNames = ['first_serve', 'second_serve'];
   const type2Names = ['backhandwinners', 'backhand_unforced_errors', 'backhand_forced_errors',  'backhand_points_won', 'backhand_points_lost', 'smash_won','smash_lost', 'volley_won','volley_lost', 'dropshot_won' , 'dropshot_lost'];
@@ -27,14 +28,15 @@ function MatchStats() {
       points_won: 0
       })
       .then(response => {
-        setMatchId(response.data.matchId);
+        console.log('Match created:', response.data);
+        setMatchId(Number(response.data.id));
       })
       .catch(error => {
         console.error('Error creating match:', error);
       });
   }, [userId]);
-
-
+  console.log(matchId);
+  
   if (!matchId) {
     return null; // Or some loading indicator
   }
