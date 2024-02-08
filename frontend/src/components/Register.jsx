@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import AxiosInstance from './Axios'; // replace with your Axios instance
 import { useNavigate } from 'react-router-dom';
 
+//this is the schema for the form
 const schema = yup.object().shape({
   username: yup.string().required('Username is required'),
   password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters long'),
@@ -15,6 +16,7 @@ const schema = yup.object().shape({
   last_name: yup.string().required('Last name is required'),
 });
 
+//this is the function that will be called when the form is submitted
 const Register = () => {
   const history = useNavigate();
   const { register,handleSubmit, formState: { errors } } = useForm({

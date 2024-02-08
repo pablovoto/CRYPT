@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link, useLocation } from 'react-router-dom';
+import { Fragment } from 'react';
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -29,6 +30,7 @@ import TimelineIcon from '@mui/icons-material/Timeline';
 import AddchartIcon from '@mui/icons-material/Addchart';
 
 export default function Navbar(props) {
+  const [renderCount, setRenderCount] = useState(0);
   const {drawerWidth, content} = props
   const location = useLocation()
   const path = location.pathname
@@ -36,6 +38,11 @@ export default function Navbar(props) {
   const [open, setOpen] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const userId = Number(localStorage.getItem('user_id'));
+
+  //sets the isLoggedIn state based on the userId
+  useEffect(() => {
+    setRenderCount(prevCount => prevCount + 1);
+  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -70,8 +77,10 @@ export default function Navbar(props) {
     setOpen(!open)
   }
 
+  // The drawer content
   const myDrawer = (
-    <div>
+    <Fragment>
+      <h1>Renderizado: {renderCount} veces</h1>
          <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
         <List>
@@ -137,6 +146,17 @@ export default function Navbar(props) {
                 </ListItemButton>
               </ListItem>
             )}
+            {isLoggedIn && userRole === 'student' && (
+              <ListItem disablePadding>
+                <ListItemButton component={Link} to="/Matchstats" selected={"/Matchstats" === path}>
+                  <ListItemIcon>
+                    <TimelineIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={"User Match Stats"} />
+                </ListItemButton>
+              </ListItem>
+            )}
+
 
           {isLoggedIn && (
               <ListItem disablePadding>
@@ -175,7 +195,7 @@ export default function Navbar(props) {
     
        </Box>
 
-    </div>
+    </Fragment>
 
   )
 
@@ -217,11 +237,6 @@ export default function Navbar(props) {
             {myDrawer}
 
         </Drawer>
-
-       
-
-     
-
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
 

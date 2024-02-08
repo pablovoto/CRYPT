@@ -16,13 +16,14 @@ import EditProduct from './components/EditProduct';
 import ProductCatalog from './components/ProductCatalog';
 import CreateProduct from './components/CreateProduct';
 import DisplayProjects from './components/DisplayProjects';
+import TestCompnent from './components/TestComponent';
 
 function App() {
   
   const myWidth = 220
   return (
     <div className="App">
-        <Navbar 
+        <Navbar
             drawerWidth={myWidth}
             content = {
               <Routes>
@@ -41,6 +42,7 @@ function App() {
                 <Route path="/catalog" element={<ProductCatalog/>}/>
                 <Route path="/createproduct" element={<CreateProduct/>}/>
                 <Route path="/displayprojects" element={<DisplayProjects/>}/>
+                <Route path="/testcomponent" element={<TestCompnent/>}/>
               </Routes>
             }
         

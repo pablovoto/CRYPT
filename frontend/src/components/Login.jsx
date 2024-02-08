@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AxiosInstance from './Axios';
 import { useNavigate } from 'react-router-dom';
-
+import './Login.css';
 function Login() {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,6 +34,7 @@ function Login() {
   };
 
   return (
+    <div className='login-form '>
     <form onSubmit={handleLogin}>
       <input
         type="text"
@@ -50,6 +51,7 @@ function Login() {
       <button type="submit">Login</button>
       {error && <p>{error}</p>}
     </form>
+    </div>
   );
 }
 

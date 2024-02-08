@@ -3,11 +3,13 @@
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
+    
 }
 
 .login-form {
     display: flex;
     flex-direction: column;
+    background-color: blue;
 }
 
 .login-form label {
