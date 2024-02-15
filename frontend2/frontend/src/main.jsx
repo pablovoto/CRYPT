@@ -4,7 +4,10 @@ import App from './App.jsx'
 // import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  // <React.StrictMode>
+    <App>
+        console.log("Form submitted", data);
+    </App>
+    
+  //  </React.StrictMode>s
 )

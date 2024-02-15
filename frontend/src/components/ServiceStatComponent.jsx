@@ -42,6 +42,7 @@ function ServiceStatComponent({ matchId, userId , name ,flag}) {
       })
       .catch(error => {
         console.error('Error saving stats:', error);
+        console.log(stats);
       });
   };
 

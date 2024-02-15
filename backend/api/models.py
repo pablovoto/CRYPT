@@ -76,7 +76,7 @@ class Match(models.Model):
     points_won = models.IntegerField()
     
     def __str__(self):
-        return self.user.username
+        return self.user.user.username
 class MatchHistory(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     player1_score = models.IntegerField()

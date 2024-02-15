@@ -6,7 +6,7 @@ function DriveStatComponent({ matchId, userId , name ,flag}) {
     name: name,
     match: matchId,
     user: userId,
-    total_drives: 0,
+    total: 0,
     cross: 0,
     parallel: 0,
     cross_inverted: 0,
@@ -42,6 +42,7 @@ function DriveStatComponent({ matchId, userId , name ,flag}) {
       })
       .catch(error => {
         console.error('Error saving stats:', error);
+        console.log(stats);
       });
   };
 
@@ -53,7 +54,7 @@ function DriveStatComponent({ matchId, userId , name ,flag}) {
     <div>
       <div>Name: {stats.name}</div>
       <div>
-        Total Drives: {stats.total_drives}
+        <b>Total Drives: {stats.total}</b>
         <button onClick={() => incrementField('total_drives')}>+</button>
         <button onClick={() => decrementField('total_drives')}>-</button>
       </div>

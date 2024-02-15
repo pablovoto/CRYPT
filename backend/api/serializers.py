@@ -24,7 +24,7 @@ class DriveStatSerializer(serializers.ModelSerializer):
     match = serializers.PrimaryKeyRelatedField(queryset=Match.objects.all())
     class Meta:
         model = DriveStat
-        fields = ['name','match', 'user', 'total', 'cross', 'parallel', 'cross_inverted', 'parallel_inverted']
+        fields = ['cross', 'cross_inverted', 'match', 'name', 'parallel', 'parallel_inverted','total',  'user' ]
     def validate_name(self, value):
         """
         Check that the name is not empty and meets any other validation requirements.
@@ -39,7 +39,7 @@ class Type2StatSerializer(serializers.ModelSerializer):
     match = serializers.PrimaryKeyRelatedField(queryset=Match.objects.all())
     class Meta:
         model = Type2Stat
-        fields = ['name','match', 'user', 'total', 'cross', 'parallel']
+        fields = ['cross', 'match', 'name', 'parallel', 'total', 'user']
     def validate_name(self, value):
         """
         Check that the name is not empty and meets any other validation requirements.
@@ -101,12 +101,17 @@ class UserSerializer(serializers.ModelSerializer):
             Professor.objects.create(user=instance)
 
         return instance
+    def get(self, request):
+        user = request.user
+        return user
+    
     
 class StudentSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.all())
     class Meta:
         model = Student
         fields = ['user']
+    
 
 class ProfessorSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.all())

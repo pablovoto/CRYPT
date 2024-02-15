@@ -84,21 +84,21 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UserSerializer
 
-    def perform_create(self, serializer):
-        user = serializer.save()
+    # def perform_create(self, serializer):
+    #     user = serializer.save()
 
-        if serializer.validated_data.get('is_professor', True):
-            Professor.objects.create(user=user)
-        else:
-            Student.objects.create(user=user)
+    #     if serializer.validated_data.get('is_professor', True):
+    #         Professor.objects.create(user=user)
+    #     else:
+    #         Student.objects.create(user=user)
 
-    def perform_update(self, serializer):
-        user = serializer.save()
+    # def perform_update(self, serializer):
+    #     user = serializer.save()
 
-        if serializer.validated_data.get('is_professor', True) and not Professor.objects.filter(user=user).exists():
-            Professor.objects.create(user=user)
-        elif not serializer.validated_data.get('is_professor', True) and not Student.objects.filter(user=user).exists():
-            Student.objects.create(user=user)
+    #     if serializer.validated_data.get('is_professor', True) and not Professor.objects.filter(user=user).exists():
+    #         Professor.objects.create(user=user)
+    #     elif not serializer.validated_data.get('is_professor', True) and not Student.objects.filter(user=user).exists():
+    #         Student.objects.create(user=user)
 
 class UsernameOrEmailBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
@@ -124,6 +124,7 @@ class UsernameOrEmailBackend(ModelBackend):
             return UserModel.objects.get(pk=user_id)
         except UserModel.DoesNotExist:
             return None
+
 class LoginView(APIView):
     def post(self, request, format=None):
         data = request.data

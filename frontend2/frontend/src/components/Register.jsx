@@ -13,13 +13,13 @@ const RegistrationForm = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            console.log("Form submitted", data);
+            // console.log("Form submitted", data);
             const studentResponse = await AxiosInstance.post('users/', {
-                username: data.username,
-                password: data.password,
-                email: data.email,
-                first_name: data.first_name,
-                last_name: data.last_name,
+                username: username,
+                password: password,
+                email: email,
+                first_name: first_name,
+                last_name: last_name,
                 is_active: true,
                 is_staff: false,
                 is_professor: false,

@@ -7,6 +7,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import Home from './components/Home'
 import NavBar from './components/NavBar'
 import Register from './components/Register'
+import Students from './components/GetStudents'
 function App() {
   const [count, setCount] = useState(0)
   const [renderCount, setRenderCount] = useState(0)
@@ -19,6 +20,7 @@ function App() {
     <Routes>
       <Route path="" element={<Home />} /> 
       <Route path="register" element={<Register />} />
+      <Route path="students" element={<Students />} />
       {/* This will only be rendered when the URL is "/" */}
       {/* Add more Route components here for other paths */}
     </Routes> 

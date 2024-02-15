@@ -21,7 +21,7 @@ function MatchStats() {
 
   // Create a new match when the component mounts
   useEffect(() => {
-    AxiosInstance.post('/matches/', { 
+    AxiosInstance.post('matches/', { 
       user: userId,
       sets_won: 0,
       games_won: 0,
@@ -44,16 +44,16 @@ function MatchStats() {
   return (
     <div>
       <TennisScoreComponent matchId={matchId} />
-      {driveNames.map(name => (
-        <DriveStatComponent key={name} matchId={matchId} playerId={userId} name={name} flag={flag}/>
+       {driveNames.map(name => (
+        <DriveStatComponent key={name} matchId={matchId} userId={userId} name={name} flag={flag}/>
       ))}
       {type2Names.map(name => (
-        <Type2StatComponent key={name} matchId={matchId} playerId={userId} name={name} flag={flag}/>
+        <Type2StatComponent key={name} matchId={matchId} userId={userId} name={name} flag={flag}/>
       ))}
-      {serviceNames.map(name => ( 
-        <ServiceStatComponent key={name} matchId={matchId} playerId={userId} name={name} flag={flag}/>
-      ))}
-      <button onClick={handleButtonClick}>Activate Flag</button>
+      {/* {serviceNames.map(name => ( 
+        <ServiceStatComponent key={name} matchId={matchId} userId={userId} name={name} flag={flag}/>
+      ))} */}
+      <button onClick={handleButtonClick}>Activate Flag</button> 
     </div>
   );
 }
