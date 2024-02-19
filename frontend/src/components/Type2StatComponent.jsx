@@ -32,7 +32,7 @@ function Type2StatComponent({ matchId, userId, name , flag}) {
   }, [flag]);
 
   const saveStats = () => {
-    AxiosInstance.put(`type2stats/`, stats)
+    AxiosInstance.post(`type2_stat/`, stats)
       .then(response => {
         console.log('Stats saved successfully:', response.data);
       })

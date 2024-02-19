@@ -50,9 +50,9 @@ function MatchStats() {
       {type2Names.map(name => (
         <Type2StatComponent key={name} matchId={matchId} userId={userId} name={name} flag={flag}/>
       ))}
-      {/* {serviceNames.map(name => ( 
+      {serviceNames.map(name => ( 
         <ServiceStatComponent key={name} matchId={matchId} userId={userId} name={name} flag={flag}/>
-      ))} */}
+      ))}
       <button onClick={handleButtonClick}>Activate Flag</button> 
     </div>
   );

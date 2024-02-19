@@ -21,23 +21,28 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
     }, [flag]);
 
     const endMatch = () => {
-        AxiosInstance.put(`matches`, {
-                    sets_won: player1Sets,
-                    games_won: player1Games,
-                    points_won: player1Score,
-                    user_id: userId,
-                    match_id: matchId,
-                });
-                AxiosInstance.post(`matchhistory/`, {
-                    match : matchId,
-                    player1_score: player1Score,
-                    player2_score: player2Score,
-                    player1_games: player1Games,
-                    player2_games: player2Games,
-                    player1_sets: player1Sets,
-                    player2_sets: player2Sets,
-                    is_tiebreaker: isTieBreaker,
-                });
+        try {
+            AxiosInstance.put(`matches`, {
+            sets_won: player1Sets,
+            games_won: player1Games,
+            points_won: player1Score,
+            user_id: userId,
+            match_id: matchId,
+        });
+        AxiosInstance.post(`matchhistory`, {
+            match : matchId,
+            player1_score: player1Score,
+            player2_score: player2Score,
+            player1_games: player1Games,
+            player2_games: player2Games,
+            player1_sets: player1Sets,
+            player2_sets: player2Sets,
+            is_tiebreaker: isTieBreaker,
+        });
+        } catch (error) {
+            console.error('Error saving match:', error);
+            console.log(player1Score, player2Score, player1Games, player2Games, player1Sets, player2Sets, isTieBreaker);
+        }
             // Reset the match
             setPlayer1Score(0);
             setPlayer2Score(0);

@@ -17,7 +17,7 @@ function DriveStatComponent({ matchId, userId , name ,flag}) {
     setStats({
       ...stats,
       [field]: stats[field] + 1,
-      total_drives: stats.total_drives + 1,
+      total: stats.total + 1,
     });
   };
 
@@ -25,7 +25,7 @@ function DriveStatComponent({ matchId, userId , name ,flag}) {
     setStats({
       ...stats,
       [field]: stats[field] - 1,
-      total_drives: stats.total_drives - 1,
+      total: stats.total - 1,
     });
   };
 

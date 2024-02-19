@@ -13,7 +13,7 @@ router.register(r'project_manager', views.ProjectManagerViewset, basename='proje
 router.register(r'project', views.ProjectViewset, basename='project')
 
 router.register(r'matches', MatchView, basename='matches')
-router.register(r'matchhistory/', MatchHistoryView, basename='matchhistory')
+router.register(r'matchhistory', MatchHistoryView, basename='matchhistory')
 
 
 router.register(r'drive_stat', views.DriveStatViewSet, basename='drive_stat')

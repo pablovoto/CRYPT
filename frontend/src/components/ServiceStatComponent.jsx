@@ -36,7 +36,7 @@ function ServiceStatComponent({ matchId, userId , name ,flag}) {
   } , [flag]);
 
   const saveStats = () => {
-    AxiosInstance.put(`/service_stat/`, stats)
+    AxiosInstance.post(`/service_stat/`, stats)
       .then(response => {
         console.log('Stats saved successfully:', response.data);
       })

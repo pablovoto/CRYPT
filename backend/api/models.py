@@ -99,7 +99,7 @@ class DriveStat(models.Model):
     parallel_inverted= models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.match} - {self.player}"
+        return f"{self.match} - {self.user} - {self.name}"
 
 class Type2Stat(models.Model):
     name = models.CharField(max_length=100)
@@ -110,7 +110,7 @@ class Type2Stat(models.Model):
     parallel = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.match} - {self.player}"
+        return f"{self.match} - {self.user} - {self.name}"
 
 class ServiceStat(models.Model):
     name = models.CharField(max_length=100)
@@ -123,7 +123,7 @@ class ServiceStat(models.Model):
     ace = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.match} - {self.player}"
+        return f"{self.match} - {self.user} - {self.name}"
     
 class Product(models.Model):
     name = models.CharField(max_length=255)
