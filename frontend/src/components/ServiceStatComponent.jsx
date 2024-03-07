@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AxiosInstance from './Axios'; // Assuming you're using axios for API calls
+import '../style/StatsElements.css';
 
 function ServiceStatComponent({ matchId, userId , name ,flag}) {
   const [stats, setStats] = useState({
@@ -38,10 +39,10 @@ function ServiceStatComponent({ matchId, userId , name ,flag}) {
   const saveStats = () => {
     AxiosInstance.post(`/service_stat/`, stats)
       .then(response => {
-        console.log('Stats saved successfully:', response.data);
+        // console.log('Stats saved successfully:');
       })
       .catch(error => {
-        console.error('Error saving stats:', error);
+        console.error('Error saving stats:');
         console.log(stats);
       });
   };
@@ -51,29 +52,29 @@ function ServiceStatComponent({ matchId, userId , name ,flag}) {
   }
 
   return (
-    <div>
-      <div>Name: {stats.name}</div>
-      <div>
+    <div className='stat-element'>
+      <span className='title-text'>{stats.name.replace(/_/g, " ")}</span>
+      <div className='stat-content'>
         Total Services: {stats.total_services}
         <button onClick={() => incrementField('total_services')}>+</button>
         <button onClick={() => decrementField('total_services')}>-</button>
       </div>
-      <div>
+      <div className='stat-content'>
         To The T: {stats.to_the_t}
         <button onClick={() => incrementField('to_the_t')}>+</button>
         <button onClick={() => decrementField('to_the_t')}>-</button>
       </div>
-      <div>
+      <div className='stat-content'>
         Open: {stats.open}
         <button onClick={() => incrementField('open')}>+</button>
         <button onClick={() => decrementField('open')}>-</button>
       </div>
-      <div>
+      <div className='stat-content'>
         Middle: {stats.middle}
         <button onClick={() => incrementField('middle')}>+</button>
         <button onClick={() => decrementField('middle')}>-</button>
       </div>
-      <div>
+      <div className='stat-content'>
         Ace: {stats.ace}
         <button onClick={() => incrementField('ace')}>+</button>
         <button onClick={() => decrementField('ace')}>-</button>

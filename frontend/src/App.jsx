@@ -1,5 +1,7 @@
 import './App.css';
 import {Routes, Route} from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router-dom';
+
 import Home from './components/Home';
 import About from './components/About';
 import Create from './components/Create';
@@ -20,13 +22,11 @@ import TestCompnent from './components/TestComponent';
 
 function App() {
   
-  const myWidth = 220
+  
   return (
-    <div className="App">
-        <Navbar
-            drawerWidth={myWidth}
-            content = {
-              <Routes>
+    <Router>
+      <Navbar/> {/* This will always be rendered */}
+          <Routes>
                 <Route path="" element={<Home/>}/>
                 <Route path="/about" element={<About/>}/>
                 <Route path="/create" element={<Create/>}/>
@@ -44,14 +44,7 @@ function App() {
                 <Route path="/displayprojects" element={<DisplayProjects/>}/>
                 <Route path="/testcomponent" element={<TestCompnent/>}/>
               </Routes>
-            }
-        
-        />
-            
-
-
-        
-    </div>
+        </Router>
   );
 }
 

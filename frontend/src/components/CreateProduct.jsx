@@ -36,7 +36,7 @@ const CreateProduct = () => {
     formData.append('status', data.status);
     // append other data as needed
 
-    AxiosInstance.post('project/', formData, {
+    AxiosInstance.post('products', formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }

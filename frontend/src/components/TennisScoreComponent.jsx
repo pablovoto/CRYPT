@@ -1,5 +1,6 @@
 import { useState, useEffect , useRef} from 'react';
 import AxiosInstance from './Axios';
+import '../style/Score.css';
 
 const TennisScoreComponent = ({ matchId, userId ,flag }) => {
     const [player1Score, setPlayer1Score] = useState(0);
@@ -14,22 +15,22 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
     const [history, setHistory] = useState([]);
     const [setCount, setSetCount] = useState(0);
 
-    useEffect(() => {
+    useEffect (() => {
         if (flag) {
             endMatch();
-        }
-    }, [flag]);
+        };
+      }, [flag]);
 
-    const endMatch = () => {
+    const endMatch = async() => {
+        console.log(userId, matchId, player1Sets, player1Games, player1Score);
         try {
-            AxiosInstance.put(`matches`, {
+        await AxiosInstance.put(`matches/${matchId}/`, {
+            user: userId,
             sets_won: player1Sets,
             games_won: player1Games,
             points_won: player1Score,
-            user_id: userId,
-            match_id: matchId,
         });
-        AxiosInstance.post(`matchhistory`, {
+        await AxiosInstance.post(`matchhistory/`, {
             match : matchId,
             player1_score: player1Score,
             player2_score: player2Score,
@@ -39,19 +40,21 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
             player2_sets: player2Sets,
             is_tiebreaker: isTieBreaker,
         });
+        console.log('Match saved successfully');
+        
         } catch (error) {
             console.error('Error saving match:', error);
-            console.log(player1Score, player2Score, player1Games, player2Games, player1Sets, player2Sets, isTieBreaker);
+            console.log(stats);
         }
-            // Reset the match
-            setPlayer1Score(0);
-            setPlayer2Score(0);
-            setPlayer1Games(0);
-            setPlayer2Games(0);
-            setPlayer1Sets(0);
-            setPlayer2Sets(0);
-            setIsTieBreaker(false);
-            setHistory([]);
+        //    Reset the match
+        setPlayer1Score(0);
+        setPlayer2Score(0);
+        setPlayer1Games(0);
+        setPlayer2Games(0);
+        setPlayer1Sets(0);
+        setPlayer2Sets(0);
+        setIsTieBreaker(false);
+        setHistory([]); 
     };
 
     const scorePoint = (player) => {
@@ -238,8 +241,8 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
 
     }
     }
+    
     const [shouldDecrement, setShouldDecrement] = useState(false);
-
     const decrementingScore = useRef(false);
 
     useEffect(() => {
@@ -280,9 +283,6 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
         });
     };
    
-
-
-
     return (
         <div>
             
@@ -302,13 +302,11 @@ const TennisScoreComponent = ({ matchId, userId ,flag }) => {
                 </select>
             </div>
             <div>Player 1:</div>
-            <button onClick={() => scorePoint(1)}>Increment Player 1</button>
-
-
+            <button className='btn-score' onClick={() => scorePoint(1)}>Increment Player 1</button>
             <div>Player 2</div>
-            <button onClick={() => scorePoint(2)}>Increment Player 2</button>
+            <button className='btn-score' onClick={() => scorePoint(2)}>Increment Player 2</button>
             <div>
-            <button onClick={() => setShouldDecrement(true)}>Undo</button>
+            <button className='btn-score' onClick={() => setShouldDecrement(true)}>Undo</button>
             <h2>Score</h2>
             <p>Player 1: {player1Sets} sets, {player1Games} games, {player1Score} points</p>
             <p>Player 2: {player2Sets} sets, {player2Games} games, {player2Score} points</p>
